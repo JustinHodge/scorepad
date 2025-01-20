@@ -45,7 +45,7 @@ class scorePadContext {
         return this.isConnected ? this.scorePadId : null;
     };
 
-    public startNewScorePad = (numberOfPlayers: number) => {
+    public startNewScorePad = (numberOfPlayers: number, startScore: number) => {
         const players: IPlayer[] = [];
         for (let i = 0; i < numberOfPlayers; i++) {
             const randomColorIndex = Math.floor(
@@ -61,7 +61,7 @@ class scorePadContext {
             players.push({
                 name: `Player ${i + 1}`,
                 color: randomColorKey,
-                score: 0,
+                score: startScore ?? 0,
             });
         }
         const message: IScorePadMessage = {
