@@ -1,16 +1,13 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './main.css';
-
-export interface IGame {}
+import App from './App';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     React.createElement(() => {
-        const connection = useRef<WebSocket>();
-
         return (
             <React.StrictMode>
-                <p>Hello</p>
+                <App />
             </React.StrictMode>
         );
     })
