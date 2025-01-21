@@ -1,4 +1,4 @@
-import { IPlayer } from '../../../types';
+import { EnumMessageType, IPlayer, IScorePadMessage } from '../../../types';
 
 class ScorePad {
     private players: IPlayer[];
@@ -23,11 +23,14 @@ export class ScorePads {
         this.scorePads = [];
     }
 
-    createNewScorePad(players: IPlayer[]) {
+    createNewScorePad(players: IPlayer[]): IScorePadMessage {
         const newScorePad = new ScorePad(players);
-        console.log(`newScorePad: ${newScorePad}`);
         this.scorePads.push(newScorePad);
-        return newScorePad.getScorePadId();
+        return {
+            players,
+            type: EnumMessageType.NEW_PAD,
+            scorePadId: newScorePad.getScorePadId(),
+        };
     }
 }
 

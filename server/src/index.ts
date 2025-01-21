@@ -25,17 +25,17 @@ const server = app.listen(port, () => {
 const wss = new WebSocketServer({ server: server });
 const scorePads = new ScorePads();
 
-wss.on('connection', (ws, request) => {
-    ws.on('error', console.error);
+wss.on('connection', (websocket, request) => {
+    websocket.on('error', console.error);
 
-    ws.on('message', (data: string) => {
+    websocket.on('message', (data: string) => {
         const parsedData = JSON.parse(data);
-        const response = websocketMessageHandler(parsedData, scorePads);
+        websocketMessageHandler(parsedData, scorePads, websocket);
 
-        if (response) {
-            ws.send(response);
-        }
+        // if (response) {
+        //     ws.send(response);
+        // }
     });
 
-    ws.send('Successfully Connected');
+    websocket.send('Successfully Connected');
 });
