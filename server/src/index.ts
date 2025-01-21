@@ -1,10 +1,9 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import { websocketMessage } from './controller/websocketMessage';
+import { websocketMessageHandler } from './controller/websocketMessageHandler';
 import ScorePads from './controller/scorePads';
 import { WebSocketServer } from 'ws';
-import { IScorePadMessage } from '../../types';
 
 dotenv.config();
 
@@ -13,12 +12,10 @@ const port = process.env.PORT || 3000;
 
 app.use(cors());
 
-app.get('/ping', (req: Request, res: Response) => {
-    res.send({ pong: 'pong' });
-});
-
 app.get('/', (req: Request, res: Response) => {
-    res.send('Express + TypeScript Server');
+    process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging'
+        ? res.send('')
+        : res.send('Development Server. Use Vite Frontend.');
 });
 
 const server = app.listen(port, () => {
@@ -31,19 +28,14 @@ const scorePads = new ScorePads();
 wss.on('connection', (ws, request) => {
     ws.on('error', console.error);
 
-    ws.on('message', (data: string | ArrayBuffer | Blob) => {
-        if (typeof data !== 'string') {
-            console.error(`Received non string websocket message. ${data}`);
-            return;
-        }
-
+    ws.on('message', (data: string) => {
         const parsedData = JSON.parse(data);
-        const response = websocketMessage(parsedData, scorePads);
+        const response = websocketMessageHandler(parsedData, scorePads);
 
         if (response) {
             ws.send(response);
         }
     });
 
-    ws.send('something');
+    ws.send('Successfully Connected');
 });
