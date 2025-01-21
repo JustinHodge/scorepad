@@ -1,10 +1,10 @@
 import { ChangeEventHandler, useContext, useState } from 'react';
-import './startnew.css';
-import ScorepadContext from '../../../../contexts/scorepad';
+import './start_new.css';
+import ScorepadContext from '../../../../contexts/score_pad';
 
 const DEFAULT_NUM_PLAYERS = 1;
 export const StartNew = () => {
-    const scorePad = useContext(ScorepadContext);
+    const { startNewScorePad } = useContext(ScorepadContext);
     const [numberOfPlayers, setNumberOfPlayers] =
         useState<number>(DEFAULT_NUM_PLAYERS);
     const [startingScore, setStartingScore] = useState<number>(0);
@@ -48,7 +48,7 @@ export const StartNew = () => {
             <button
                 type='button'
                 onClick={() => {
-                    scorePad.startNewScorePad(numberOfPlayers, startingScore);
+                    startNewScorePad(numberOfPlayers, startingScore);
                 }}
             >
                 Start New Score Pad

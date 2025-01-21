@@ -1,4 +1,4 @@
-import './joinexisting.css';
+import './join_existing.css';
 
 export const JoinExisting = () => {
     return (

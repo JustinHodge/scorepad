@@ -1,6 +1,6 @@
-import JoinExisting from './components/joinexisting/joinexisting';
-import StartNew from './components/startnew/startnew';
-import './newscorepad.css';
+import JoinExisting from './components/join_existing/join_existing';
+import StartNew from './components/start_new/start_new';
+import './new_score_pad.css';
 
 export const NewScorepad = () => {
     return (
