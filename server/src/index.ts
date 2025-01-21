@@ -1,7 +1,10 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import WebSocket, { WebSocketServer } from 'ws';
+import { websocketMessage } from './controller/websocketMessage';
+import ScorePads from './controller/scorePads';
+import { WebSocketServer } from 'ws';
+import { IScorePadMessage } from '../../types';
 
 dotenv.config();
 
@@ -23,12 +26,23 @@ const server = app.listen(port, () => {
 });
 
 const wss = new WebSocketServer({ server: server });
+const scorePads = new ScorePads();
 
 wss.on('connection', (ws, request) => {
     ws.on('error', console.error);
 
-    ws.on('message', (data) => {
-        console.log('received: %s', data);
+    ws.on('message', (data: string | ArrayBuffer | Blob) => {
+        if (typeof data !== 'string') {
+            console.error(`Received non string websocket message. ${data}`);
+            return;
+        }
+
+        const parsedData = JSON.parse(data);
+        const response = websocketMessage(parsedData, scorePads);
+
+        if (response) {
+            ws.send(response);
+        }
     });
 
     ws.send('something');

@@ -45,7 +45,10 @@ class scorePadContext {
         return this.isConnected ? this.scorePadId : null;
     };
 
-    public startNewScorePad = (numberOfPlayers: number, startScore: number) => {
+    public startNewScorePad = async (
+        numberOfPlayers: number,
+        startScore: number
+    ) => {
         const players: IPlayer[] = [];
         for (let i = 0; i < numberOfPlayers; i++) {
             const randomColorIndex = Math.floor(
