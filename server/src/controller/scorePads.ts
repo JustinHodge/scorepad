@@ -12,6 +12,10 @@ class ScorePad {
     public getScorePadId = () => {
         return this.scorePadId;
     };
+
+    public setPlayers = (players: IPlayer[]) => {
+        this.players = players;
+    };
 }
 
 export class ScorePads {
@@ -30,6 +34,28 @@ export class ScorePads {
             players,
             type: EnumMessageType.NEW_PAD,
             scorePadId: newScorePad.getScorePadId(),
+        };
+    }
+
+    updateScorePad(players: IPlayer[], scorePadId: string): IScorePadMessage {
+        const scorePad = this.scorePads.find((scorePad) => {
+            return scorePad.getScorePadId() === scorePadId;
+        });
+
+        if (!scorePad) {
+            console.log('ScorePad not found');
+            return {
+                players,
+                type: EnumMessageType.NEW_PAD,
+            };
+        }
+
+        scorePad.setPlayers(players);
+
+        return {
+            players,
+            type: EnumMessageType.UPDATE_PAD,
+            scorePadId: scorePad.getScorePadId(),
         };
     }
 }

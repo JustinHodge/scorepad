@@ -19,9 +19,7 @@ export enum EnumPlayerColors {
 
 export enum EnumMessageType {
     NEW_PAD = 'NEW_PAD',
-    PLAYERS = 'PLAYERS',
-    SCORE = 'SCORE',
-    ALL_DATA = 'ALL_DATA',
+    UPDATE_PAD = 'UPDATE_PAD',
     CONTROL_MESSAGE = 'CONTROL_MESSAGE',
 }
 

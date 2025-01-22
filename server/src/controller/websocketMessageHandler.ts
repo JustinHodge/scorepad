@@ -8,7 +8,7 @@ export const websocketMessageHandler = (
     scorePads: ScorePads,
     webSocket: WebSocket
 ) => {
-    const { type, players } = data;
+    const { type, players, scorePadId } = data;
 
     let response: IScorePadMessage | null = null;
 
@@ -16,9 +16,8 @@ export const websocketMessageHandler = (
         case EnumMessageType.NEW_PAD:
             response = scorePads.createNewScorePad(players);
             break;
-        case EnumMessageType.PLAYERS:
-            break;
-        case EnumMessageType.SCORE:
+        case EnumMessageType.UPDATE_PAD:
+            response = scorePads.updateScorePad(players, scorePadId ?? '');
             break;
         default:
             break;

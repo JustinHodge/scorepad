@@ -15,11 +15,30 @@ interface IScorePadContext {
     setPlayers: React.Dispatch<React.SetStateAction<IPlayer[]>>;
     setScorePadId: React.Dispatch<React.SetStateAction<string | undefined>>;
     startNewScorePad: (numberOfPlayers: number, startScore: number) => void;
+    addPlayer: (startScore: number) => void;
 }
 
 export const ScorepadContext = createContext<IScorePadContext>(
     {} as IScorePadContext
 );
+
+const buildPlayer = (playerNumber: number, startScore: number) => {
+    const randomColorIndex = Math.floor(
+        Math.random() * Object.keys(EnumPlayerColors).length
+    );
+    const randomColorKey =
+        EnumPlayerColors[
+            Object.keys(EnumPlayerColors)[
+                randomColorIndex
+            ] as keyof typeof EnumPlayerColors
+        ];
+
+    return {
+        name: `Player ${playerNumber}`,
+        color: randomColorKey,
+        score: startScore ?? 0,
+    };
+};
 
 export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
     const [isConnected, setIsConnected] = useState(false);
@@ -32,7 +51,11 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
         };
 
         webSocket.onmessage = (event) => {
-            console.log('Message from the server:', event.data);
+            console.log(
+                'Message from the server:',
+                event.data,
+                typeof event.data
+            );
             const parsedData = JSON.parse(event.data) as
                 | IScorePadMessage
                 | IControlMessage;
@@ -40,14 +63,16 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
             const isControlMessage = (
                 parsedData: unknown
             ): parsedData is IControlMessage =>
-                (parsedData as IControlMessage).type ===
+                (parsedData as IControlMessage)?.type ===
                 EnumMessageType.CONTROL_MESSAGE;
 
             const isScorePadMessage = (
                 parsedData: unknown
             ): parsedData is IScorePadMessage =>
-                (parsedData as IScorePadMessage).type ===
-                EnumMessageType.NEW_PAD;
+                (parsedData as IScorePadMessage)?.type ===
+                    EnumMessageType.NEW_PAD ||
+                (parsedData as IScorePadMessage)?.type ===
+                    EnumMessageType.UPDATE_PAD;
 
             if (isControlMessage(parsedData)) {
                 parsedData.message && console.log(parsedData.message);
@@ -58,13 +83,7 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
                         setScorePadId(parsedData.scorePadId);
                         setPlayers(parsedData.players);
                         break;
-                    case EnumMessageType.PLAYERS:
-                        if (scorePadId !== parsedData.scorePadId) {
-                            throw new Error('Invalid scorePadId');
-                        }
-                        setPlayers(parsedData.players);
-                        break;
-                    case EnumMessageType.SCORE:
+                    case EnumMessageType.UPDATE_PAD:
                         if (scorePadId !== parsedData.scorePadId) {
                             throw new Error('Invalid scorePadId');
                         }
@@ -95,25 +114,30 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
     ) => {
         const players: IPlayer[] = [];
         for (let i = 0; i < numberOfPlayers; i++) {
-            const randomColorIndex = Math.floor(
-                Math.random() * Object.keys(EnumPlayerColors).length
-            );
-            const randomColorKey =
-                EnumPlayerColors[
-                    Object.keys(EnumPlayerColors)[
-                        randomColorIndex
-                    ] as keyof typeof EnumPlayerColors
-                ];
-
-            players.push({
-                name: `Player ${i + 1}`,
-                color: randomColorKey,
-                score: startScore ?? 0,
-            });
+            const newPlayer = buildPlayer(i + 1, startScore);
+            players.push(newPlayer);
         }
         const message: IScorePadMessage = {
             type: EnumMessageType.NEW_PAD,
             players: players,
+        };
+
+        webSocket.send(JSON.stringify(message));
+    };
+
+    const addPlayer = (startScore: number) => {
+        const playerNames = players.map((player) => player.name);
+        let newPlayerNumber = players.length;
+
+        while (playerNames.includes(`Player ${newPlayerNumber}`)) {
+            newPlayerNumber++;
+        }
+
+        const newPlayer = buildPlayer(newPlayerNumber, startScore);
+        const message: IScorePadMessage = {
+            type: EnumMessageType.UPDATE_PAD,
+            players: [...players, newPlayer],
+            scorePadId: scorePadId,
         };
 
         webSocket.send(JSON.stringify(message));
@@ -127,6 +151,7 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
         setPlayers,
         setScorePadId,
         startNewScorePad,
+        addPlayer,
     };
 
     return (
