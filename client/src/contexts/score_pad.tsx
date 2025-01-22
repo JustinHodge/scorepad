@@ -5,9 +5,6 @@ import {
     IPlayer,
     IScorePadMessage,
 } from '../../../types';
-interface IScorePadMessageEvent extends MessageEvent {
-    data: IScorePadMessage;
-}
 
 interface IScorePadContext {
     isConnected: boolean;
@@ -34,25 +31,26 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
             console.log('Connected to the server');
         };
 
-        webSocket.onmessage = (event: IScorePadMessageEvent) => {
+        webSocket.onmessage = (event) => {
             console.log('Message from the server:', event.data);
+            const parsedData = JSON.parse(event.data) as IScorePadMessage;
 
-            switch (event.data.type) {
+            switch (parsedData.type) {
                 case EnumMessageType.NEW_PAD:
-                    setScorePadId(event.data.scorePadId);
-                    setPlayers(event.data.players);
+                    setScorePadId(parsedData.scorePadId);
+                    setPlayers(parsedData.players);
                     break;
                 case EnumMessageType.PLAYERS:
-                    if (scorePadId !== event.data.scorePadId) {
+                    if (scorePadId !== parsedData.scorePadId) {
                         throw new Error('Invalid scorePadId');
                     }
-                    setPlayers(event.data.players);
+                    setPlayers(parsedData.players);
                     break;
                 case EnumMessageType.SCORE:
-                    if (scorePadId !== event.data.scorePadId) {
+                    if (scorePadId !== parsedData.scorePadId) {
                         throw new Error('Invalid scorePadId');
                     }
-                    setPlayers(event.data.players);
+                    setPlayers(parsedData.players);
                     break;
                 default:
                     break;
