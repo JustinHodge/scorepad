@@ -4,6 +4,11 @@ import cors from 'cors';
 import { websocketMessageHandler } from './controller/websocketMessageHandler';
 import ScorePads from './controller/scorePads';
 import { WebSocketServer } from 'ws';
+import {
+    EnumMessageType,
+    IControlMessage,
+    IScorePadMessage,
+} from '../../types';
 
 dotenv.config();
 
@@ -37,5 +42,10 @@ wss.on('connection', (websocket, request) => {
         // }
     });
 
-    websocket.send('Successfully Connected');
+    const message: IControlMessage = {
+        type: EnumMessageType.CONTROL_MESSAGE,
+        message: 'Successfully Connected',
+    };
+
+    websocket.send(JSON.stringify(message));
 });

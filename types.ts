@@ -22,6 +22,13 @@ export enum EnumMessageType {
     PLAYERS = 'PLAYERS',
     SCORE = 'SCORE',
     ALL_DATA = 'ALL_DATA',
+    CONTROL_MESSAGE = 'CONTROL_MESSAGE',
+}
+
+export interface IControlMessage {
+    type: EnumMessageType.CONTROL_MESSAGE;
+    message?: string;
+    data?: any;
 }
 
 export interface IScorePadMessage {

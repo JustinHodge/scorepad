@@ -2,6 +2,7 @@ import { createContext, useMemo, useState } from 'react';
 import {
     EnumMessageType,
     EnumPlayerColors,
+    IControlMessage,
     IPlayer,
     IScorePadMessage,
 } from '../../../types';
@@ -28,32 +29,52 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
         const webSocket = new WebSocket('ws://localhost:3000');
         webSocket.onopen = () => {
             setIsConnected(true);
-            console.log('Connected to the server');
         };
 
         webSocket.onmessage = (event) => {
             console.log('Message from the server:', event.data);
-            const parsedData = JSON.parse(event.data) as IScorePadMessage;
+            const parsedData = JSON.parse(event.data) as
+                | IScorePadMessage
+                | IControlMessage;
 
-            switch (parsedData.type) {
-                case EnumMessageType.NEW_PAD:
-                    setScorePadId(parsedData.scorePadId);
-                    setPlayers(parsedData.players);
-                    break;
-                case EnumMessageType.PLAYERS:
-                    if (scorePadId !== parsedData.scorePadId) {
-                        throw new Error('Invalid scorePadId');
-                    }
-                    setPlayers(parsedData.players);
-                    break;
-                case EnumMessageType.SCORE:
-                    if (scorePadId !== parsedData.scorePadId) {
-                        throw new Error('Invalid scorePadId');
-                    }
-                    setPlayers(parsedData.players);
-                    break;
-                default:
-                    break;
+            const isControlMessage = (
+                parsedData: unknown
+            ): parsedData is IControlMessage =>
+                (parsedData as IControlMessage).type ===
+                EnumMessageType.CONTROL_MESSAGE;
+
+            const isScorePadMessage = (
+                parsedData: unknown
+            ): parsedData is IScorePadMessage =>
+                (parsedData as IScorePadMessage).type ===
+                EnumMessageType.NEW_PAD;
+
+            if (isControlMessage(parsedData)) {
+                parsedData.message && console.log(parsedData.message);
+                parsedData.data && console.log(parsedData.data);
+            } else if (isScorePadMessage(parsedData)) {
+                switch (parsedData.type) {
+                    case EnumMessageType.NEW_PAD:
+                        setScorePadId(parsedData.scorePadId);
+                        setPlayers(parsedData.players);
+                        break;
+                    case EnumMessageType.PLAYERS:
+                        if (scorePadId !== parsedData.scorePadId) {
+                            throw new Error('Invalid scorePadId');
+                        }
+                        setPlayers(parsedData.players);
+                        break;
+                    case EnumMessageType.SCORE:
+                        if (scorePadId !== parsedData.scorePadId) {
+                            throw new Error('Invalid scorePadId');
+                        }
+                        setPlayers(parsedData.players);
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                throw new Error(`Invalid message ${parsedData}`);
             }
         };
 
