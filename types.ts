@@ -29,13 +29,6 @@ export interface IControlMessage {
     data?: any;
 }
 
-// TODO maybe change the players to object of shape { [key: string]: IPlayer } with key as player id
-// export interface IScorePadMessage {
-//     type: EnumMessageType;
-//     players: IPlayer[];
-//     scorePadId?: string;
-// }
-
 export interface IPlayers {
     [key: string]: IPlayer;
 }
