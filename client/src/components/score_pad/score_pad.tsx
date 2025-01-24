@@ -9,7 +9,7 @@ export const Scorepad = () => {
         <div>
             <h1>ScorePad: {scorePadId}</h1>
             <div className='score-pad'>
-                {players.map((player) => (
+                {Object.values(players).map((player) => (
                     <div key={player.name} className='player'>
                         <p>{player.name}</p>
                         <p>{player.score}</p>

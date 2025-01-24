@@ -1,11 +1,11 @@
-import { EnumMessageType, IPlayer, IScorePadMessage } from '../../../types';
+import { EnumMessageType, IPlayers, IScorePadMessage } from '../../../types';
 
 class ScorePad {
-    private players: IPlayer[];
+    private players: IPlayers;
     private scorePadId: string;
 
-    constructor(players: IPlayer[]) {
-        this.players = [];
+    constructor(players: IPlayers) {
+        this.players = {};
         this.scorePadId = crypto.randomUUID();
     }
 
@@ -13,7 +13,7 @@ class ScorePad {
         return this.scorePadId;
     };
 
-    public setPlayers = (players: IPlayer[]) => {
+    public setPlayers = (players: IPlayers) => {
         this.players = players;
     };
 }
@@ -27,7 +27,7 @@ export class ScorePads {
         this.scorePads = [];
     }
 
-    createNewScorePad(players: IPlayer[]): IScorePadMessage {
+    createNewScorePad(players: IPlayers): IScorePadMessage {
         const newScorePad = new ScorePad(players);
         this.scorePads.push(newScorePad);
         return {
@@ -37,7 +37,7 @@ export class ScorePads {
         };
     }
 
-    updateScorePad(players: IPlayer[], scorePadId: string): IScorePadMessage {
+    updateScorePad(players: IPlayers, scorePadId: string): IScorePadMessage {
         const scorePad = this.scorePads.find((scorePad) => {
             return scorePad.getScorePadId() === scorePadId;
         });

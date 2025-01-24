@@ -3,16 +3,16 @@ import {
     EnumMessageType,
     EnumPlayerColors,
     IControlMessage,
-    IPlayer,
+    IPlayers,
     IScorePadMessage,
 } from '../../../types';
 
 interface IScorePadContext {
     isConnected: boolean;
-    players: IPlayer[];
+    players: IPlayers;
     scorePadId: string | undefined;
     setIsConnected: React.Dispatch<React.SetStateAction<boolean>>;
-    setPlayers: React.Dispatch<React.SetStateAction<IPlayer[]>>;
+    setPlayers: React.Dispatch<React.SetStateAction<IPlayers>>;
     setScorePadId: React.Dispatch<React.SetStateAction<string | undefined>>;
     startNewScorePad: (numberOfPlayers: number, startScore: number) => void;
     addPlayer: (startScore: number) => void;
@@ -34,6 +34,7 @@ const buildPlayer = (playerNumber: number, startScore: number) => {
         ];
 
     return {
+        id: crypto.randomUUID(),
         name: `Player ${playerNumber}`,
         color: randomColorKey,
         score: startScore ?? 0,
@@ -42,7 +43,7 @@ const buildPlayer = (playerNumber: number, startScore: number) => {
 
 export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
     const [isConnected, setIsConnected] = useState(false);
-    const [players, setPlayers] = useState<IPlayer[]>([]);
+    const [players, setPlayers] = useState<IPlayers>({});
     const [scorePadId, setScorePadId] = useState<string | undefined>(undefined);
     const webSocket = useMemo(() => {
         const webSocket = new WebSocket('ws://localhost:3000');
@@ -112,10 +113,10 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
         numberOfPlayers: number,
         startScore: number
     ) => {
-        const players: IPlayer[] = [];
+        const players: IPlayers = {};
         for (let i = 0; i < numberOfPlayers; i++) {
             const newPlayer = buildPlayer(i + 1, startScore);
-            players.push(newPlayer);
+            players[newPlayer.id] = newPlayer;
         }
         const message: IScorePadMessage = {
             type: EnumMessageType.NEW_PAD,
@@ -126,8 +127,8 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
     };
 
     const addPlayer = (startScore: number) => {
-        const playerNames = players.map((player) => player.name);
-        let newPlayerNumber = players.length;
+        const playerNames = Object.values(players).map((player) => player.name);
+        let newPlayerNumber = Object.keys(players).length;
 
         while (playerNames.includes(`Player ${newPlayerNumber}`)) {
             newPlayerNumber++;
@@ -136,7 +137,7 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
         const newPlayer = buildPlayer(newPlayerNumber, startScore);
         const message: IScorePadMessage = {
             type: EnumMessageType.UPDATE_PAD,
-            players: [...players, newPlayer],
+            players: { ...players, newPlayer },
             scorePadId: scorePadId,
         };
 
