@@ -76,19 +76,22 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
                     EnumMessageType.UPDATE_PAD;
 
             if (isControlMessage(parsedData)) {
+                // TODO: handle control messages
                 parsedData.message && console.log(parsedData.message);
                 parsedData.data && console.log(parsedData.data);
             } else if (isScorePadMessage(parsedData)) {
+                const { players: newPlayers, scorePadId: newScorePadId } =
+                    parsedData.scorePadData;
                 switch (parsedData.type) {
                     case EnumMessageType.NEW_PAD:
-                        setScorePadId(parsedData.scorePadId);
-                        setPlayers(parsedData.players);
+                        setScorePadId(newScorePadId);
+                        setPlayers(newPlayers);
                         break;
                     case EnumMessageType.UPDATE_PAD:
-                        if (scorePadId !== parsedData.scorePadId) {
+                        if (newScorePadId !== scorePadId) {
                             throw new Error('Invalid scorePadId');
                         }
-                        setPlayers(parsedData.players);
+                        setPlayers(newPlayers);
                         break;
                     default:
                         break;
@@ -120,7 +123,7 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
         }
         const message: IScorePadMessage = {
             type: EnumMessageType.NEW_PAD,
-            players: players,
+            scorePadData: { players: players, scorePadId: '' },
         };
 
         webSocket.send(JSON.stringify(message));
@@ -137,8 +140,10 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
         const newPlayer = buildPlayer(newPlayerNumber, startScore);
         const message: IScorePadMessage = {
             type: EnumMessageType.UPDATE_PAD,
-            players: { ...players, newPlayer },
-            scorePadId: scorePadId,
+            scorePadData: {
+                players: { ...players, newPlayer },
+                scorePadId: scorePadId ?? '',
+            },
         };
 
         webSocket.send(JSON.stringify(message));

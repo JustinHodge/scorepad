@@ -33,8 +33,12 @@ export interface IPlayers {
     [key: string]: IPlayer;
 }
 
+export interface IScorePadData {
+    players: IPlayers;
+    scorePadId: string;
+}
+
 export interface IScorePadMessage {
     type: EnumMessageType;
-    players: IPlayers;
-    scorePadId?: string;
+    scorePadData: IScorePadData;
 }

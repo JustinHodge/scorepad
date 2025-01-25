@@ -5,7 +5,7 @@ class ScorePad {
     private scorePadId: string;
 
     constructor(players: IPlayers) {
-        this.players = {};
+        this.players = players ?? {};
         this.scorePadId = crypto.randomUUID();
     }
 
@@ -16,36 +16,43 @@ class ScorePad {
     public setPlayers = (players: IPlayers) => {
         this.players = players;
     };
+
+    public getScorePadData = () => {
+        return {
+            players: this.players,
+            scorePadId: this.scorePadId,
+        };
+    };
 }
 
 export class ScorePads {
-    private scorePads: ScorePad[];
+    private scorePads: { [scorePadId: string]: ScorePad };
 
     // TODO Flush stale pads.
 
     constructor() {
-        this.scorePads = [];
+        this.scorePads = {};
     }
 
     createNewScorePad(players: IPlayers): IScorePadMessage {
         const newScorePad = new ScorePad(players);
-        this.scorePads.push(newScorePad);
+        const newScorePadId = newScorePad.getScorePadId();
+
+        this.scorePads[newScorePadId] = newScorePad;
+
         return {
-            players,
+            scorePadData: newScorePad.getScorePadData(),
             type: EnumMessageType.NEW_PAD,
-            scorePadId: newScorePad.getScorePadId(),
         };
     }
 
     updateScorePad(players: IPlayers, scorePadId: string): IScorePadMessage {
-        const scorePad = this.scorePads.find((scorePad) => {
-            return scorePad.getScorePadId() === scorePadId;
-        });
+        const scorePad = this.scorePads[scorePadId];
 
         if (!scorePad) {
             console.log('ScorePad not found');
             return {
-                players,
+                scorePadData: { players: {}, scorePadId: '' },
                 type: EnumMessageType.NEW_PAD,
             };
         }
@@ -53,9 +60,8 @@ export class ScorePads {
         scorePad.setPlayers(players);
 
         return {
-            players,
+            scorePadData: scorePad.getScorePadData(),
             type: EnumMessageType.UPDATE_PAD,
-            scorePadId: scorePad.getScorePadId(),
         };
     }
 }

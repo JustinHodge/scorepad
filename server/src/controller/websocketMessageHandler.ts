@@ -8,7 +8,8 @@ export const websocketMessageHandler = (
     scorePads: ScorePads,
     webSocket: WebSocket
 ) => {
-    const { type, players, scorePadId } = data;
+    const { type, scorePadData } = data;
+    const { players, scorePadId } = scorePadData;
 
     let response: IScorePadMessage | null = null;
 
