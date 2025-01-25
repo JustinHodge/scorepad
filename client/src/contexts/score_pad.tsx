@@ -141,7 +141,7 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
         const message: IScorePadMessage = {
             type: EnumMessageType.UPDATE_PAD,
             scorePadData: {
-                players: { ...players, newPlayer },
+                players: { ...players, [newPlayer.id]: newPlayer },
                 scorePadId: scorePadId ?? '',
             },
         };
