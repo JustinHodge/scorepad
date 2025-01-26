@@ -1,19 +1,16 @@
 import { createContext, useMemo, useState } from 'react';
 import {
     EnumMessageType,
-    EnumPlayerColors,
-    IControlMessage,
-    IPlayers,
-    IScorePadMessage,
+    IRequestAddPlayerMessage,
+    IRequestNewPadMessage,
+    IResponseMessage,
+    IScorePadData,
+    ISystemMessage,
 } from '../../../types';
 
 interface IScorePadContext {
     isConnected: boolean;
-    players: IPlayers;
-    scorePadId: string | undefined;
-    setIsConnected: React.Dispatch<React.SetStateAction<boolean>>;
-    setPlayers: React.Dispatch<React.SetStateAction<IPlayers>>;
-    setScorePadId: React.Dispatch<React.SetStateAction<string | undefined>>;
+    scorePadData: IScorePadData;
     startNewScorePad: (numberOfPlayers: number, startScore: number) => void;
     addPlayer: (startScore: number) => void;
 }
@@ -22,29 +19,13 @@ export const ScorepadContext = createContext<IScorePadContext>(
     {} as IScorePadContext
 );
 
-const buildPlayer = (playerNumber: number, startScore: number) => {
-    const randomColorIndex = Math.floor(
-        Math.random() * Object.keys(EnumPlayerColors).length
-    );
-    const randomColorKey =
-        EnumPlayerColors[
-            Object.keys(EnumPlayerColors)[
-                randomColorIndex
-            ] as keyof typeof EnumPlayerColors
-        ];
-
-    return {
-        id: crypto.randomUUID(),
-        name: `Player ${playerNumber}`,
-        color: randomColorKey,
-        score: startScore ?? 0,
-    };
-};
-
 export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
     const [isConnected, setIsConnected] = useState(false);
-    const [players, setPlayers] = useState<IPlayers>({});
-    const [scorePadId, setScorePadId] = useState<string | undefined>(undefined);
+    const [scorePadData, setScorePadData] = useState<IScorePadData>({
+        players: {},
+        scorePadId: '',
+    });
+
     const webSocket = useMemo(() => {
         const webSocket = new WebSocket('ws://localhost:3000');
         webSocket.onopen = () => {
@@ -52,53 +33,38 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
         };
 
         webSocket.onmessage = (event) => {
-            console.log(
-                'Message from the server:',
-                event.data,
-                typeof event.data
-            );
             const parsedData = JSON.parse(event.data) as
-                | IScorePadMessage
-                | IControlMessage;
+                | IResponseMessage
+                | ISystemMessage;
 
-            const isControlMessage = (
-                parsedData: unknown
-            ): parsedData is IControlMessage =>
-                (parsedData as IControlMessage)?.type ===
-                EnumMessageType.CONTROL_MESSAGE;
-
-            const isScorePadMessage = (
-                parsedData: unknown
-            ): parsedData is IScorePadMessage =>
-                (parsedData as IScorePadMessage)?.type ===
-                    EnumMessageType.NEW_PAD ||
-                (parsedData as IScorePadMessage)?.type ===
-                    EnumMessageType.UPDATE_PAD;
-
-            if (isControlMessage(parsedData)) {
-                // TODO: handle control messages
-                parsedData.message && console.log(parsedData.message);
-                parsedData.data && console.log(parsedData.data);
-            } else if (isScorePadMessage(parsedData)) {
-                const { players: newPlayers, scorePadId: newScorePadId } =
-                    parsedData.scorePadData;
-                switch (parsedData.type) {
-                    case EnumMessageType.NEW_PAD:
-                        setScorePadId(newScorePadId);
-                        setPlayers(newPlayers);
-                        break;
-                    case EnumMessageType.UPDATE_PAD:
-                        if (newScorePadId !== scorePadId) {
-                            throw new Error('Invalid scorePadId');
-                        }
-                        setPlayers(newPlayers);
-                        break;
-                    default:
-                        break;
-                }
-            } else {
-                throw new Error(`Invalid message ${parsedData}`);
+            if (parsedData.type === EnumMessageType.SYSTEM_MESSAGE) {
+                console.log(parsedData.data.message);
+                return;
             }
+
+            const {
+                type,
+                data: {
+                    success,
+                    request,
+                    scorePadData: newScorePadData,
+                    message,
+                },
+            } = JSON.parse(event.data) as IResponseMessage;
+
+            if (type !== EnumMessageType.RESPONSE_MESSAGE) {
+                console.error(
+                    `Received a non-response message from the server: ${event.data}`
+                );
+                return;
+            }
+
+            if (!success) {
+                console.log(`Failed ${request.type} request. ${message}`);
+                return;
+            }
+
+            setScorePadData(newScorePadData);
         };
 
         webSocket.onerror = (event) => {
@@ -110,39 +76,30 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
             console.log('Disconnected from server');
         };
         return webSocket;
-    }, [scorePadId]);
+    }, []);
 
     const startNewScorePad = async (
         numberOfPlayers: number,
         startScore: number
     ) => {
-        const players: IPlayers = {};
-        for (let i = 0; i < numberOfPlayers; i++) {
-            const newPlayer = buildPlayer(i + 1, startScore);
-            players[newPlayer.id] = newPlayer;
-        }
-        const message: IScorePadMessage = {
-            type: EnumMessageType.NEW_PAD,
-            scorePadData: { players: players, scorePadId: '' },
+        const message: IRequestNewPadMessage = {
+            type: EnumMessageType.REQUEST_NEW_PAD,
+            scorePadId: scorePadData.scorePadId,
+            data: {
+                numberOfPlayers,
+                startScore,
+            },
         };
 
         webSocket.send(JSON.stringify(message));
     };
 
     const addPlayer = (startScore: number) => {
-        const playerNames = Object.values(players).map((player) => player.name);
-        let newPlayerNumber = Object.keys(players).length;
-
-        while (playerNames.includes(`Player ${newPlayerNumber}`)) {
-            newPlayerNumber++;
-        }
-
-        const newPlayer = buildPlayer(newPlayerNumber, startScore);
-        const message: IScorePadMessage = {
-            type: EnumMessageType.UPDATE_PAD,
-            scorePadData: {
-                players: { ...players, [newPlayer.id]: newPlayer },
-                scorePadId: scorePadId ?? '',
+        const message: IRequestAddPlayerMessage = {
+            type: EnumMessageType.REQUEST_ADD_PLAYER,
+            scorePadId: scorePadData.scorePadId,
+            data: {
+                startScore,
             },
         };
 
@@ -151,11 +108,7 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
 
     const value = {
         isConnected,
-        players,
-        scorePadId,
-        setIsConnected,
-        setPlayers,
-        setScorePadId,
+        scorePadData,
         startNewScorePad,
         addPlayer,
     };

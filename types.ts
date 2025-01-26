@@ -17,18 +17,6 @@ export enum EnumPlayerColors {
     GRAY = '#8a8a8a',
 }
 
-export enum EnumMessageType {
-    NEW_PAD = 'NEW_PAD',
-    UPDATE_PAD = 'UPDATE_PAD',
-    CONTROL_MESSAGE = 'CONTROL_MESSAGE',
-}
-
-export interface IControlMessage {
-    type: EnumMessageType.CONTROL_MESSAGE;
-    message?: string;
-    data?: any;
-}
-
 export interface IPlayers {
     [key: string]: IPlayer;
 }
@@ -38,7 +26,69 @@ export interface IScorePadData {
     scorePadId: string;
 }
 
-export interface IScorePadMessage {
+export enum EnumMessageType {
+    REQUEST_NEW_PAD = 'REQUEST_NEW_PAD',
+    REQUEST_ADD_PLAYER = 'REQUEST_ADD_PLAYER',
+    REQUEST_UPDATE_PLAYER = 'REQUEST_UPDATE_PLAYER',
+    REQUEST_UPDATE_SCORE = 'REQUEST_UPDATE_SCORE',
+    RESPONSE_MESSAGE = 'RESPONSE_MESSAGE',
+    SYSTEM_MESSAGE = 'SYSTEM_MESSAGE',
+}
+
+interface IMessage {
     type: EnumMessageType;
-    scorePadData: IScorePadData;
+    scorePadId: string;
+}
+
+export interface ISystemMessage {
+    type: EnumMessageType.SYSTEM_MESSAGE;
+    data: {
+        message: string;
+    };
+}
+
+export interface IRequestNewPadMessage extends IMessage {
+    type: EnumMessageType.REQUEST_NEW_PAD;
+    data: {
+        numberOfPlayers: number;
+        startScore: number;
+    };
+}
+
+export interface IRequestAddPlayerMessage extends IMessage {
+    type: EnumMessageType.REQUEST_ADD_PLAYER;
+    data: {
+        startScore: number;
+    };
+}
+
+export interface IRequestUpdatePlayerMessageData {
+    playerId: string;
+    newName?: string;
+    newColor?: string;
+}
+
+export interface IRequestUpdatePlayerMessage extends IMessage {
+    type: EnumMessageType.REQUEST_UPDATE_PLAYER;
+    data: IRequestUpdatePlayerMessageData;
+}
+
+export interface IRequestUpdateScoreMessage extends IMessage {
+    type: EnumMessageType.REQUEST_UPDATE_SCORE;
+    data: {
+        playerId: string;
+        newScore: number;
+    };
+}
+
+export interface IResponseMessage extends IMessage {
+    type: EnumMessageType.RESPONSE_MESSAGE;
+    data: {
+        success: boolean;
+        message?: string;
+        request: {
+            type: EnumMessageType;
+        };
+        scorePadData: IScorePadData;
+    };
 }

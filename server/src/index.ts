@@ -4,11 +4,7 @@ import cors from 'cors';
 import { websocketMessageHandler } from './controller/websocketMessageHandler';
 import ScorePads from './controller/scorePads';
 import { WebSocketServer } from 'ws';
-import {
-    EnumMessageType,
-    IControlMessage,
-    IScorePadMessage,
-} from '../../types';
+import { EnumMessageType, ISystemMessage } from '../../types';
 
 dotenv.config();
 
@@ -36,15 +32,13 @@ wss.on('connection', (websocket, request) => {
     websocket.on('message', (data: string) => {
         const parsedData = JSON.parse(data);
         websocketMessageHandler(parsedData, scorePads, websocket);
-
-        // if (response) {
-        //     ws.send(response);
-        // }
     });
 
-    const message: IControlMessage = {
-        type: EnumMessageType.CONTROL_MESSAGE,
-        message: 'Successfully Connected',
+    const message: ISystemMessage = {
+        type: EnumMessageType.SYSTEM_MESSAGE,
+        data: {
+            message: 'Successfully Connected',
+        },
     };
 
     websocket.send(JSON.stringify(message));

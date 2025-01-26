@@ -1,20 +1,72 @@
-import { EnumMessageType, IPlayers, IScorePadMessage } from '../../../types';
+import {
+    EnumMessageType,
+    EnumPlayerColors,
+    IPlayers,
+    IRequestUpdatePlayerMessageData,
+    IScorePadData,
+} from '../../../types';
 
 class ScorePad {
     private players: IPlayers;
     private scorePadId: string;
 
-    constructor(players: IPlayers) {
-        this.players = players ?? {};
+    constructor(numberOfPlayers: number, startScore: number) {
+        this.players = {};
         this.scorePadId = crypto.randomUUID();
+        this.buildPlayers(startScore, numberOfPlayers);
     }
+
+    private getPlayer = (playerId: string) => {
+        const player = this.players[playerId];
+
+        if (!player) {
+            throw new Error('Player not found');
+        }
+
+        return player;
+    };
+
+    private buildPlayer = (startScore: number) => {
+        this.buildPlayers(startScore, 1);
+    };
+
+    private buildPlayers = (startScore: number, numberToBuild: number) => {
+        for (let i = 0; i < numberToBuild; i++) {
+            const randomColorIndex = Math.floor(
+                Math.random() * Object.keys(EnumPlayerColors).length
+            );
+            const randomColorKey =
+                EnumPlayerColors[
+                    Object.keys(EnumPlayerColors)[
+                        randomColorIndex
+                    ] as keyof typeof EnumPlayerColors
+                ];
+            const playerId = crypto.randomUUID();
+
+            const playerNames = Object.values(this.players).map(
+                (player) => player.name
+            );
+            let newPlayerNumber = Object.keys(this.players).length;
+
+            while (playerNames.includes(`Player ${newPlayerNumber}`)) {
+                newPlayerNumber++;
+            }
+
+            this.players[playerId] = {
+                id: playerId,
+                color: randomColorKey,
+                name: `Player ${newPlayerNumber}`,
+                score: startScore,
+            };
+        }
+    };
 
     public getScorePadId = () => {
         return this.scorePadId;
     };
 
-    public setPlayers = (players: IPlayers) => {
-        this.players = players;
+    public addPlayer = (startScore: number) => {
+        this.buildPlayer(startScore);
     };
 
     public getScorePadData = () => {
@@ -22,6 +74,28 @@ class ScorePad {
             players: this.players,
             scorePadId: this.scorePadId,
         };
+    };
+
+    public updatePlayer = ({
+        playerId,
+        newName,
+        newColor,
+    }: IRequestUpdatePlayerMessageData) => {
+        const player = this.getPlayer(playerId);
+
+        if (newName) {
+            player.name = newName;
+        }
+
+        if (newColor) {
+            player.color = newColor;
+        }
+    };
+
+    public updatePlayerScore = (playerId: string, newScore: number) => {
+        const player = this.getPlayer(playerId);
+
+        player.score = newScore;
     };
 }
 
@@ -34,35 +108,24 @@ export class ScorePads {
         this.scorePads = {};
     }
 
-    createNewScorePad(players: IPlayers): IScorePadMessage {
-        const newScorePad = new ScorePad(players);
+    public getScorePad = (scorePadId: string) => {
+        return this.scorePads[scorePadId];
+    };
+
+    public getScorePadDataById = (scorePadId: string) => {
+        return this.scorePads[scorePadId].getScorePadData();
+    };
+
+    public createNewScorePad(
+        numberOfPlayers: number,
+        startScore: number
+    ): IScorePadData {
+        const newScorePad = new ScorePad(numberOfPlayers, startScore);
         const newScorePadId = newScorePad.getScorePadId();
 
         this.scorePads[newScorePadId] = newScorePad;
 
-        return {
-            scorePadData: newScorePad.getScorePadData(),
-            type: EnumMessageType.NEW_PAD,
-        };
-    }
-
-    updateScorePad(players: IPlayers, scorePadId: string): IScorePadMessage {
-        const scorePad = this.scorePads[scorePadId];
-
-        if (!scorePad) {
-            console.log('ScorePad not found');
-            return {
-                scorePadData: { players: {}, scorePadId: '' },
-                type: EnumMessageType.NEW_PAD,
-            };
-        }
-
-        scorePad.setPlayers(players);
-
-        return {
-            scorePadData: scorePad.getScorePadData(),
-            type: EnumMessageType.UPDATE_PAD,
-        };
+        return this.scorePads[newScorePadId].getScorePadData();
     }
 }
 
