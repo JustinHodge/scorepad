@@ -7,7 +7,7 @@ import {
     IRequestUpdateScoreMessage,
     IResponseMessage,
 } from '../../../types';
-import { ScorePads } from './scorePads';
+import { ScorePads } from '../class/scorePads';
 
 export const websocketMessageHandler = (
     data:

@@ -2,7 +2,7 @@ import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import { websocketMessageHandler } from './controller/websocketMessageHandler';
-import ScorePads from './controller/scorePads';
+import ScorePads from './class/scorePads';
 import { WebSocketServer } from 'ws';
 import { EnumMessageType, ISystemMessage } from '../../types';
 
