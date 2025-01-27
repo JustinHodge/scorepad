@@ -3,7 +3,10 @@ import ScorepadContext from '../../contexts/score_pad';
 import './score_pad.css';
 
 export const Scorepad = () => {
-    const { scorePadId, players, addPlayer } = useContext(ScorepadContext);
+    const {
+        scorePadData: { players, scorePadId },
+        addPlayer,
+    } = useContext(ScorepadContext);
     const [newPlayerScore, setNewPlayerScore] = useState<number>(0);
     return (
         <div>

@@ -36,6 +36,7 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
             const parsedData = JSON.parse(event.data) as
                 | IResponseMessage
                 | ISystemMessage;
+            console.log(parsedData);
 
             if (parsedData.type === EnumMessageType.SYSTEM_MESSAGE) {
                 console.log(parsedData.data.message);
@@ -64,6 +65,7 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
                 return;
             }
 
+            console.log('newScorePadData: ', newScorePadData);
             setScorePadData(newScorePadData);
         };
 
@@ -75,6 +77,7 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
             setIsConnected(false);
             console.log('Disconnected from server');
         };
+
         return webSocket;
     }, []);
 

@@ -5,7 +5,9 @@ import { useContext } from 'react';
 import ScorepadContext from './contexts/score_pad';
 
 export const App = () => {
-    const { scorePadId } = useContext(ScorepadContext);
+    const {
+        scorePadData: { scorePadId },
+    } = useContext(ScorepadContext);
     return <>{scorePadId ? <Scorepad /> : <NewScorepad />}</>;
 };
 

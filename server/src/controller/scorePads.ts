@@ -113,19 +113,28 @@ export class ScorePads {
     };
 
     public getScorePadDataById = (scorePadId: string) => {
+        const scorePad = this.scorePads[scorePadId];
+
+        if (!scorePad) {
+            return {
+                players: {},
+                scorePadId: '',
+            };
+        }
+
         return this.scorePads[scorePadId].getScorePadData();
     };
 
     public createNewScorePad(
         numberOfPlayers: number,
         startScore: number
-    ): IScorePadData {
+    ): ScorePad {
         const newScorePad = new ScorePad(numberOfPlayers, startScore);
         const newScorePadId = newScorePad.getScorePadId();
 
         this.scorePads[newScorePadId] = newScorePad;
 
-        return this.scorePads[newScorePadId].getScorePadData();
+        return this.scorePads[newScorePadId];
     }
 }
 

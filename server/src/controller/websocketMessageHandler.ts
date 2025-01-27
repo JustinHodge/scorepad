@@ -33,29 +33,46 @@ export const websocketMessageHandler = (
 
     const scorePad = scorePads.getScorePad(scorePadId);
 
+    console.log(`type: ${type}, scorePadId: ${scorePadId}`);
+
     switch (type) {
         // TODO implement all requests
         case EnumMessageType.REQUEST_NEW_PAD:
-            scorePads.createNewScorePad(
+            const newScorePad = scorePads.createNewScorePad(
                 requestData.numberOfPlayers,
                 requestData.startScore
             );
+
+            response.data.scorePadData = newScorePad.getScorePadData();
+            response.data.success = true;
+            response.scorePadId = newScorePad.getScorePadId();
             break;
         case EnumMessageType.REQUEST_ADD_PLAYER:
             scorePad.addPlayer(requestData.startScore);
+            response.data.success = true;
+            response.data.scorePadData = scorePad.getScorePadData();
+            response.scorePadId = scorePad.getScorePadId();
             break;
         case EnumMessageType.REQUEST_UPDATE_PLAYER:
             scorePad.updatePlayer(requestData);
+            response.data.success = true;
+            response.data.scorePadData = scorePad.getScorePadData();
+            response.scorePadId = scorePad.getScorePadId();
             break;
         case EnumMessageType.REQUEST_UPDATE_SCORE:
             scorePad.updatePlayerScore(
                 requestData.playerId,
                 requestData.newScore
             );
+            response.data.success = true;
+            response.data.scorePadData = scorePad.getScorePadData();
+            response.scorePadId = scorePad.getScorePadId();
             break;
         default:
             break;
     }
+
+    console.log(response);
 
     webSocket.send(JSON.stringify(response));
 };
