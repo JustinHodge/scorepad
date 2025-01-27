@@ -33,8 +33,6 @@ export const websocketMessageHandler = (
 
     const scorePad = scorePads.getScorePad(scorePadId);
 
-    console.log(`type: ${type}, scorePadId: ${scorePadId}`);
-
     switch (type) {
         // TODO implement all requests
         case EnumMessageType.REQUEST_NEW_PAD:
