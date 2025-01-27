@@ -2,6 +2,7 @@ import { createContext, useMemo, useState } from 'react';
 import {
     EnumMessageType,
     IRequestAddPlayerMessage,
+    IRequestJoinExistingMessage,
     IRequestNewPadMessage,
     IResponseMessage,
     IScorePadData,
@@ -13,6 +14,7 @@ interface IScorePadContext {
     scorePadData: IScorePadData;
     startNewScorePad: (numberOfPlayers: number, startScore: number) => void;
     addPlayer: (startScore: number) => void;
+    requestJoinExisting: (scorePadId: string) => void;
 }
 
 export const ScorepadContext = createContext<IScorePadContext>(
@@ -109,11 +111,22 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
         webSocket.send(JSON.stringify(message));
     };
 
+    const requestJoinExisting = (scorePadId: string) => {
+        const message: IRequestJoinExistingMessage = {
+            type: EnumMessageType.REQUEST_JOIN_EXISTING,
+            scorePadId,
+            data: {},
+        };
+
+        webSocket.send(JSON.stringify(message));
+    };
+
     const value = {
         isConnected,
         scorePadData,
         startNewScorePad,
         addPlayer,
+        requestJoinExisting,
     };
 
     return (

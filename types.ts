@@ -31,6 +31,7 @@ export enum EnumMessageType {
     REQUEST_ADD_PLAYER = 'REQUEST_ADD_PLAYER',
     REQUEST_UPDATE_PLAYER = 'REQUEST_UPDATE_PLAYER',
     REQUEST_UPDATE_SCORE = 'REQUEST_UPDATE_SCORE',
+    REQUEST_JOIN_EXISTING = 'REQUEST_JOIN_EXISTING',
     RESPONSE_MESSAGE = 'RESPONSE_MESSAGE',
     SYSTEM_MESSAGE = 'SYSTEM_MESSAGE',
 }
@@ -81,6 +82,10 @@ export interface IRequestUpdateScoreMessage extends IMessage {
     };
 }
 
+export interface IRequestJoinExistingMessage extends IMessage {
+    type: EnumMessageType.REQUEST_JOIN_EXISTING;
+    data: {};
+}
 export interface IResponseMessage extends IMessage {
     type: EnumMessageType.RESPONSE_MESSAGE;
     data: {

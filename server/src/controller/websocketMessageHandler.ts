@@ -2,6 +2,7 @@ import { WebSocket } from 'ws';
 import {
     EnumMessageType,
     IRequestAddPlayerMessage,
+    IRequestJoinExistingMessage,
     IRequestNewPadMessage,
     IRequestUpdatePlayerMessage,
     IRequestUpdateScoreMessage,
@@ -14,7 +15,8 @@ export const websocketMessageHandler = (
         | IRequestAddPlayerMessage
         | IRequestUpdateScoreMessage
         | IRequestNewPadMessage
-        | IRequestUpdatePlayerMessage,
+        | IRequestUpdatePlayerMessage
+        | IRequestJoinExistingMessage,
     scorePads: ScorePads,
     webSocket: WebSocket
 ) => {
@@ -34,7 +36,11 @@ export const websocketMessageHandler = (
     const scorePad = scorePads.getScorePad(scorePadId);
 
     switch (type) {
-        // TODO implement all requests
+        case EnumMessageType.REQUEST_JOIN_EXISTING:
+            response.data.scorePadData = scorePad.getScorePadData();
+            response.data.success = true;
+            response.scorePadId = scorePad.getScorePadId();
+            break;
         case EnumMessageType.REQUEST_NEW_PAD:
             const newScorePad = scorePads.createNewScorePad(
                 requestData.numberOfPlayers,
@@ -69,8 +75,6 @@ export const websocketMessageHandler = (
         default:
             break;
     }
-
-    console.log(response);
 
     webSocket.send(JSON.stringify(response));
 };
