@@ -11,20 +11,26 @@ dotenv.config();
 const app: Express = express();
 const port = process.env.PORT || 3000;
 
-app.use(cors());
-
-app.get('/', (req: Request, res: Response) => {
-    process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging'
-        ? res.send('')
-        : res.send('Development Server. Use Vite Frontend.');
-});
-
 const server = app.listen(port, () => {
     console.log(`[server]: Server is running at http://localhost:${port}`);
 });
 
 const wss = new WebSocketServer({ server: server });
 const scorePads = new ScorePads();
+
+app.use(cors());
+
+app.get('/', (req: Request, res: Response) => {
+    process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging'
+        ? res.status(403).send('Forbidden')
+        : res.send('Development Server. Use Vite Frontend.');
+});
+
+app.get('/scorepads', (req: Request, res: Response) => {
+    process.env.NODE_ENV === 'development'
+        ? res.send(scorePads.getScorePads())
+        : res.status(403).send('Forbidden');
+});
 
 wss.on('connection', (websocket, request) => {
     websocket.on('error', console.error);

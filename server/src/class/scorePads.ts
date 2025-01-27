@@ -9,6 +9,10 @@ export class ScorePads {
         this.scorePads = {};
     }
 
+    public getScorePads = () => {
+        return this.scorePads;
+    };
+
     public getScorePad = (scorePadId: string) => {
         return this.scorePads[scorePadId];
     };
