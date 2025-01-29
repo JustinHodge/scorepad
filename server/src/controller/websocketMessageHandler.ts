@@ -9,6 +9,7 @@ import {
     IResponseMessage,
 } from '../../../types';
 import { ScorePads } from '../class/scorePads';
+import { ScorePad } from '../class/scorePad';
 
 export const websocketMessageHandler = (
     data: IRequestMessage,
@@ -28,7 +29,7 @@ export const websocketMessageHandler = (
         },
     };
 
-    const scorePad = scorePads.getScorePad(scorePadId);
+    const existingScorePad = scorePads.getScorePad(scorePadId);
 
     const buildHandlerErrorMessage = (
         messageType: EnumMessageType,
@@ -40,12 +41,11 @@ export const websocketMessageHandler = (
     };
 
     const handlers = {
-        [EnumMessageType.REQUEST_JOIN_EXISTING]: () => {
-            response.data.scorePadData = scorePad.getScorePadData();
-            response.data.success = true;
-            response.scorePadId = scorePad.getScorePadId();
+        [EnumMessageType.REQUEST_JOIN_EXISTING]: (): ScorePad => {
+            // TODO implement this correctly. need to add websocket to scorepads list
+            return existingScorePad;
         },
-        [EnumMessageType.REQUEST_NEW_PAD]: () => {
+        [EnumMessageType.REQUEST_NEW_PAD]: (): ScorePad => {
             const { numberOfPlayers, startScore } =
                 requestData as IRequestNewPadData;
 
@@ -64,11 +64,9 @@ export const websocketMessageHandler = (
                 sourceWebSocket
             );
 
-            response.data.scorePadData = newScorePad.getScorePadData();
-            response.data.success = true;
-            response.scorePadId = newScorePad.getScorePadId();
+            return newScorePad;
         },
-        [EnumMessageType.REQUEST_ADD_PLAYER]: () => {
+        [EnumMessageType.REQUEST_ADD_PLAYER]: (): ScorePad => {
             const { startScore } = requestData as IRequestAddPlayerData;
 
             if (startScore === undefined) {
@@ -79,12 +77,12 @@ export const websocketMessageHandler = (
                     )
                 );
             }
-            scorePad.addPlayer(startScore);
-            response.data.success = true;
-            response.data.scorePadData = scorePad.getScorePadData();
-            response.scorePadId = scorePad.getScorePadId();
+
+            existingScorePad.addPlayer(startScore);
+
+            return existingScorePad;
         },
-        [EnumMessageType.REQUEST_UPDATE_PLAYER]: () => {
+        [EnumMessageType.REQUEST_UPDATE_PLAYER]: (): ScorePad => {
             const { playerId, newName, newColor } =
                 requestData as IRequestUpdatePlayerData;
 
@@ -96,12 +94,12 @@ export const websocketMessageHandler = (
                     )
                 );
             }
-            scorePad.updatePlayer({ playerId, newName, newColor });
-            response.data.success = true;
-            response.data.scorePadData = scorePad.getScorePadData();
-            response.scorePadId = scorePad.getScorePadId();
+
+            existingScorePad.updatePlayer({ playerId, newName, newColor });
+
+            return existingScorePad;
         },
-        [EnumMessageType.REQUEST_UPDATE_SCORE]: () => {
+        [EnumMessageType.REQUEST_UPDATE_SCORE]: (): ScorePad => {
             const { playerId, newScore } =
                 requestData as IRequestUpdateScoreData;
 
@@ -113,16 +111,27 @@ export const websocketMessageHandler = (
                     )
                 );
             }
-            scorePad.updatePlayerScore(playerId, newScore);
-            response.data.success = true;
-            response.data.scorePadData = scorePad.getScorePadData();
-            response.scorePadId = scorePad.getScorePadId();
+            existingScorePad.updatePlayerScore(playerId, newScore);
+
+            return existingScorePad;
         },
     };
 
     if (handlers[type]) {
-        handlers[type]();
+        const scorePad = handlers[type]();
+        if (!(scorePad instanceof ScorePad)) {
+            throw new Error(
+                `Incorrect return value of message handler function for type ${type}.`
+            );
+        }
+
+        response.data.success = true;
+        response.data.scorePadData = scorePad.getScorePadData();
+        response.scorePadId = scorePad.getScorePadId();
+
+        scorePad.sendBroadcastMessage(response);
+        return;
     }
 
-    scorePad.sendBroadcastMessage(response);
+    throw new Error(`No handler found for type ${type}`);
 };
