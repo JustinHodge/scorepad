@@ -71,7 +71,6 @@ export const websocketMessageHandler = (
         [EnumMessageType.REQUEST_ADD_PLAYER]: () => {
             const { startScore } = requestData as IRequestAddPlayerData;
 
-            // TODO does this fail on startScore = 0?
             if (startScore === undefined) {
                 throw new Error(
                     buildHandlerErrorMessage(
