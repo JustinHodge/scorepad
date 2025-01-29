@@ -43,6 +43,7 @@ export const websocketMessageHandler = (
     const handlers = {
         [EnumMessageType.REQUEST_JOIN_EXISTING]: (): ScorePad => {
             // TODO implement this correctly. need to add websocket to scorepads list
+            existingScorePad.joinGame(sourceWebSocket);
             return existingScorePad;
         },
         [EnumMessageType.REQUEST_NEW_PAD]: (): ScorePad => {

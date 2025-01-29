@@ -110,4 +110,8 @@ export class ScorePad {
             webSocket.send(JSON.stringify(message));
         });
     };
+
+    public joinGame = (joiningWebSocket: WebSocket) => {
+        this.webSockets.push(joiningWebSocket);
+    };
 }
