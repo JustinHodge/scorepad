@@ -1,4 +1,5 @@
 import { ScorePad } from './scorePad';
+import { WebSocket } from 'ws';
 
 export class ScorePads {
     private scorePads: { [scorePadId: string]: ScorePad };
@@ -32,9 +33,14 @@ export class ScorePads {
 
     public createNewScorePad(
         numberOfPlayers: number,
-        startScore: number
+        startScore: number,
+        webSocket: WebSocket
     ): ScorePad {
-        const newScorePad = new ScorePad(numberOfPlayers, startScore);
+        const newScorePad = new ScorePad(
+            numberOfPlayers,
+            startScore,
+            webSocket
+        );
         const newScorePadId = newScorePad.getScorePadId();
 
         this.scorePads[newScorePadId] = newScorePad;

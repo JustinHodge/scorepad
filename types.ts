@@ -41,29 +41,35 @@ interface IMessage {
     scorePadId: string;
 }
 
+export interface ISystemMessageData {
+    message: string;
+}
+
 export interface ISystemMessage {
     type: EnumMessageType.SYSTEM_MESSAGE;
-    data: {
-        message: string;
-    };
+    data: ISystemMessageData;
+}
+
+export interface IRequestNewPadData {
+    numberOfPlayers: number;
+    startScore: number;
 }
 
 export interface IRequestNewPadMessage extends IMessage {
     type: EnumMessageType.REQUEST_NEW_PAD;
-    data: {
-        numberOfPlayers: number;
-        startScore: number;
-    };
+    data: IRequestNewPadData;
+}
+
+export interface IRequestAddPlayerData {
+    startScore: number;
 }
 
 export interface IRequestAddPlayerMessage extends IMessage {
     type: EnumMessageType.REQUEST_ADD_PLAYER;
-    data: {
-        startScore: number;
-    };
+    data: IRequestAddPlayerData;
 }
 
-export interface IRequestUpdatePlayerMessageData {
+export interface IRequestUpdatePlayerData {
     playerId: string;
     newName?: string;
     newColor?: string;
@@ -71,29 +77,42 @@ export interface IRequestUpdatePlayerMessageData {
 
 export interface IRequestUpdatePlayerMessage extends IMessage {
     type: EnumMessageType.REQUEST_UPDATE_PLAYER;
-    data: IRequestUpdatePlayerMessageData;
+    data: IRequestUpdatePlayerData;
+}
+
+export interface IRequestUpdateScoreData {
+    playerId: string;
+    newScore: number;
 }
 
 export interface IRequestUpdateScoreMessage extends IMessage {
     type: EnumMessageType.REQUEST_UPDATE_SCORE;
-    data: {
-        playerId: string;
-        newScore: number;
-    };
+    data: IRequestUpdateScoreData;
 }
+
+export interface IRequestJoinExistingData {}
 
 export interface IRequestJoinExistingMessage extends IMessage {
     type: EnumMessageType.REQUEST_JOIN_EXISTING;
-    data: {};
+    data: IRequestJoinExistingData;
+}
+
+export interface IResponseData {
+    success: boolean;
+    message?: string;
+    request: {
+        type: EnumMessageType;
+    };
+    scorePadData: IScorePadData;
 }
 export interface IResponseMessage extends IMessage {
     type: EnumMessageType.RESPONSE_MESSAGE;
-    data: {
-        success: boolean;
-        message?: string;
-        request: {
-            type: EnumMessageType;
-        };
-        scorePadData: IScorePadData;
-    };
+    data: IResponseData;
 }
+
+export type IRequestMessage =
+    | IRequestAddPlayerMessage
+    | IRequestUpdateScoreMessage
+    | IRequestNewPadMessage
+    | IRequestUpdatePlayerMessage
+    | IRequestJoinExistingMessage;

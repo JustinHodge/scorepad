@@ -1,17 +1,26 @@
 import {
     EnumPlayerColors,
     IPlayers,
-    IRequestUpdatePlayerMessageData,
+    IRequestUpdatePlayerData,
+    IResponseMessage,
 } from '../../../types';
+
+import { WebSocket } from 'ws';
 
 export class ScorePad {
     private players: IPlayers;
     private scorePadId: string;
+    private webSockets: WebSocket[];
 
-    constructor(numberOfPlayers: number, startScore: number) {
+    constructor(
+        numberOfPlayers: number,
+        startScore: number,
+        webSocket: WebSocket
+    ) {
         this.players = {};
         this.scorePadId = crypto.randomUUID();
         this.buildPlayers(startScore, numberOfPlayers);
+        this.webSockets = [webSocket];
     }
 
     private getPlayer = (playerId: string) => {
@@ -78,7 +87,7 @@ export class ScorePad {
         playerId,
         newName,
         newColor,
-    }: IRequestUpdatePlayerMessageData) => {
+    }: IRequestUpdatePlayerData) => {
         const player = this.getPlayer(playerId);
 
         if (newName) {
@@ -94,5 +103,11 @@ export class ScorePad {
         const player = this.getPlayer(playerId);
 
         player.score = newScore;
+    };
+
+    public sendBroadcastMessage = (message: IResponseMessage) => {
+        this.webSockets.forEach((webSocket) => {
+            webSocket.send(JSON.stringify(message));
+        });
     };
 }
