@@ -33,7 +33,8 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
     const webSocket = useMemo(() => {
         const webSocket = new WebSocket('ws://localhost:3000');
         webSocket.onopen = () => {
-            setIsConnected(true);
+            setIsConnected(webSocket.readyState === 1);
+            console.log('Connected to the server');
         };
 
         webSocket.onmessage = (event) => {
@@ -69,16 +70,16 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
                 return;
             }
 
-            console.log('newScorePadData: ', newScorePadData);
             setScorePadData(newScorePadData);
         };
 
         webSocket.onerror = (event) => {
+            setIsConnected(webSocket.readyState === 1);
             console.log('error: ', event);
         };
 
         webSocket.onclose = () => {
-            setIsConnected(false);
+            setIsConnected(webSocket.readyState === 1);
             console.log('Disconnected from server');
         };
 
