@@ -42,9 +42,18 @@ export const websocketMessageHandler = (
 
     const handlers = {
         [EnumMessageType.REQUEST_JOIN_EXISTING]: (): ScorePad => {
-            // TODO implement this correctly. need to add websocket to scorepads list
+            // TODO: better error handling for invalid scorePadId
+            if (!existingScorePad) {
+                throw new Error(
+                    buildHandlerErrorMessage(
+                        EnumMessageType.REQUEST_JOIN_EXISTING,
+                        data
+                    )
+                );
+            }
             existingScorePad.joinGame(sourceWebSocket);
-            return existingScorePad;
+
+            return existingScorePad ?? { players: {}, scorePadId: '' };
         },
         [EnumMessageType.REQUEST_LEAVE_EXISTING]: (): ScorePad => {
             existingScorePad.leaveGame(sourceWebSocket);
