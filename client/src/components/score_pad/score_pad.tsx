@@ -48,7 +48,7 @@ export const Scorepad = () => {
             <h1>ScorePad: {scorePadId}</h1>
             <div className='score-pad'>
                 {Object.values(players).map((player) => (
-                    <div key={player.name} className='player'>
+                    <div key={player.id} className='player'>
                         <input
                             type='text'
                             value={
@@ -95,8 +95,6 @@ export const Scorepad = () => {
                                 });
                             }}
                         ></input>
-                        <p>{player.name}</p>
-                        <p>{player.score}</p>
                     </div>
                 ))}
             </div>
