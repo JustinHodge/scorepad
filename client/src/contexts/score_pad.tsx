@@ -5,6 +5,10 @@ import {
     IRequestJoinExistingMessage,
     IRequestLeaveExistingMessage,
     IRequestNewPadMessage,
+    IRequestUpdatePlayerData,
+    IRequestUpdatePlayerMessage,
+    IRequestUpdateScoreData,
+    IRequestUpdateScoreMessage,
     IResponseMessage,
     IScorePadData,
     ISystemMessage,
@@ -17,6 +21,8 @@ interface IScorePadContext {
     addPlayer: (startScore: number) => void;
     requestJoinExisting: (scorePadId: string) => void;
     requestLeaveExisting: () => void;
+    requestUpdatePlayerData: (requestData: IRequestUpdatePlayerData) => void;
+    requestUpdatePlayerScore: (requestData: IRequestUpdateScoreData) => void;
 }
 
 export const ScorepadContext = createContext<IScorePadContext>(
@@ -102,7 +108,7 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
         webSocket.send(JSON.stringify(message));
     };
 
-    const addPlayer = (startScore: number) => {
+    const requestAddPlayer = (startScore: number) => {
         const message: IRequestAddPlayerMessage = {
             type: EnumMessageType.REQUEST_ADD_PLAYER,
             scorePadId: scorePadData.scorePadId,
@@ -134,13 +140,39 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
         webSocket.send(JSON.stringify(message));
     };
 
+    const requestUpdatePlayerData = (
+        updatedPlayerData: IRequestUpdatePlayerData
+    ) => {
+        const message: IRequestUpdatePlayerMessage = {
+            type: EnumMessageType.REQUEST_UPDATE_PLAYER,
+            scorePadId: scorePadData.scorePadId,
+            data: updatedPlayerData,
+        };
+
+        webSocket.send(JSON.stringify(message));
+    };
+
+    const requestUpdatePlayerScore = (
+        updatedPlayerScore: IRequestUpdateScoreData
+    ) => {
+        const message: IRequestUpdateScoreMessage = {
+            type: EnumMessageType.REQUEST_UPDATE_SCORE,
+            scorePadId: scorePadData.scorePadId,
+            data: updatedPlayerScore,
+        };
+
+        webSocket.send(JSON.stringify(message));
+    };
+
     const value = {
         isConnected,
         scorePadData,
         startNewScorePad,
-        addPlayer,
+        addPlayer: requestAddPlayer,
         requestJoinExisting,
         requestLeaveExisting,
+        requestUpdatePlayerData,
+        requestUpdatePlayerScore,
     };
 
     return (
