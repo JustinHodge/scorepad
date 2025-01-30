@@ -3,6 +3,7 @@ import {
     EnumMessageType,
     IRequestAddPlayerMessage,
     IRequestJoinExistingMessage,
+    IRequestLeaveExistingMessage,
     IRequestNewPadMessage,
     IResponseMessage,
     IScorePadData,
@@ -15,6 +16,7 @@ interface IScorePadContext {
     startNewScorePad: (numberOfPlayers: number, startScore: number) => void;
     addPlayer: (startScore: number) => void;
     requestJoinExisting: (scorePadId: string) => void;
+    requestLeaveExisting: () => void;
 }
 
 export const ScorepadContext = createContext<IScorePadContext>(
@@ -121,12 +123,23 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
         webSocket.send(JSON.stringify(message));
     };
 
+    const requestLeaveExisting = () => {
+        const message: IRequestLeaveExistingMessage = {
+            type: EnumMessageType.REQUEST_LEAVE_EXISTING,
+            scorePadId: scorePadData.scorePadId,
+            data: {},
+        };
+
+        webSocket.send(JSON.stringify(message));
+    };
+
     const value = {
         isConnected,
         scorePadData,
         startNewScorePad,
         addPlayer,
         requestJoinExisting,
+        requestLeaveExisting,
     };
 
     return (

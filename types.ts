@@ -34,6 +34,7 @@ export enum EnumMessageType {
     REQUEST_JOIN_EXISTING = 'REQUEST_JOIN_EXISTING',
     RESPONSE_MESSAGE = 'RESPONSE_MESSAGE',
     SYSTEM_MESSAGE = 'SYSTEM_MESSAGE',
+    REQUEST_LEAVE_EXISTING = 'REQUEST_LEAVE_EXISTING',
 }
 
 interface IMessage {
@@ -95,6 +96,13 @@ export interface IRequestJoinExistingData {}
 export interface IRequestJoinExistingMessage extends IMessage {
     type: EnumMessageType.REQUEST_JOIN_EXISTING;
     data: IRequestJoinExistingData;
+}
+
+export interface IRequestLeaveExistingData {}
+
+export interface IRequestLeaveExistingMessage extends IMessage {
+    type: EnumMessageType.REQUEST_LEAVE_EXISTING;
+    data: IRequestLeaveExistingData;
 }
 
 export interface IResponseData {

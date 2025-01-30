@@ -46,6 +46,10 @@ export const websocketMessageHandler = (
             existingScorePad.joinGame(sourceWebSocket);
             return existingScorePad;
         },
+        [EnumMessageType.REQUEST_LEAVE_EXISTING]: (): ScorePad => {
+            existingScorePad.leaveGame(sourceWebSocket);
+            return existingScorePad;
+        },
         [EnumMessageType.REQUEST_NEW_PAD]: (): ScorePad => {
             const { numberOfPlayers, startScore } =
                 requestData as IRequestNewPadData;

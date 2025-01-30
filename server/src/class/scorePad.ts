@@ -1,4 +1,5 @@
 import {
+    EnumMessageType,
     EnumPlayerColors,
     IPlayers,
     IRequestUpdatePlayerData,
@@ -113,5 +114,30 @@ export class ScorePad {
 
     public joinGame = (joiningWebSocket: WebSocket) => {
         this.webSockets.push(joiningWebSocket);
+    };
+
+    public leaveGame = (leavingWebSocket: WebSocket) => {
+        this.webSockets = this.webSockets.filter(
+            (webSocket) => webSocket !== leavingWebSocket
+        );
+
+        leavingWebSocket.send(
+            JSON.stringify({
+                type: EnumMessageType.RESPONSE_MESSAGE,
+                data: {
+                    success: true,
+                    message: 'You have left the score pad',
+                    request: {
+                        type: EnumMessageType.REQUEST_LEAVE_EXISTING,
+                        scorePadId: this.scorePadId,
+                        data: {},
+                    },
+                    scorePadData: {
+                        players: {},
+                        scorePadId: '',
+                    },
+                },
+            })
+        );
     };
 }

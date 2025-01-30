@@ -6,6 +6,7 @@ export const Scorepad = () => {
     const {
         scorePadData: { players, scorePadId },
         addPlayer,
+        requestLeaveExisting,
     } = useContext(ScorepadContext);
     const [newPlayerScore, setNewPlayerScore] = useState<number>(0);
     return (
@@ -35,6 +36,14 @@ export const Scorepad = () => {
                     }}
                 >
                     Add Player
+                </button>
+                <button
+                    type='button'
+                    onClick={() => {
+                        requestLeaveExisting();
+                    }}
+                >
+                    Leave Score Pad
                 </button>
             </div>
         </div>
