@@ -1,20 +1,10 @@
+import { MESSAGE_TYPE } from './globalConstants';
+
 export interface IPlayer {
     id: string | null;
     name: string;
     color: string;
     score: number;
-}
-
-export enum EnumPlayerColors {
-    RED = '#FF0000',
-    GREEN = '#00FF00',
-    BLUE = '#0000FF',
-    YELLOW = '#FFFF00',
-    PURPLE = '#FF00FF',
-    CYAN = '#00FFFF',
-    WHITE = '#FFFFFF',
-    BLACK = '#000000',
-    GRAY = '#8a8a8a',
 }
 
 export interface IPlayers {
@@ -26,19 +16,8 @@ export interface IScorePadData {
     scorePadId: string;
 }
 
-export enum EnumMessageType {
-    REQUEST_NEW_PAD = 'REQUEST_NEW_PAD',
-    REQUEST_ADD_PLAYER = 'REQUEST_ADD_PLAYER',
-    REQUEST_UPDATE_PLAYER = 'REQUEST_UPDATE_PLAYER',
-    REQUEST_UPDATE_SCORE = 'REQUEST_UPDATE_SCORE',
-    REQUEST_JOIN_EXISTING = 'REQUEST_JOIN_EXISTING',
-    RESPONSE_MESSAGE = 'RESPONSE_MESSAGE',
-    SYSTEM_MESSAGE = 'SYSTEM_MESSAGE',
-    REQUEST_LEAVE_EXISTING = 'REQUEST_LEAVE_EXISTING',
-}
-
 interface IMessage {
-    type: EnumMessageType;
+    type: keyof typeof MESSAGE_TYPE;
     scorePadId: string;
 }
 
@@ -47,7 +26,7 @@ export interface ISystemMessageData {
 }
 
 export interface ISystemMessage {
-    type: EnumMessageType.SYSTEM_MESSAGE;
+    type: typeof MESSAGE_TYPE.SYSTEM_MESSAGE;
     data: ISystemMessageData;
 }
 
@@ -57,7 +36,7 @@ export interface IRequestNewPadData {
 }
 
 export interface IRequestNewPadMessage extends IMessage {
-    type: EnumMessageType.REQUEST_NEW_PAD;
+    type: typeof MESSAGE_TYPE.REQUEST_NEW_PAD;
     data: IRequestNewPadData;
 }
 
@@ -66,7 +45,7 @@ export interface IRequestAddPlayerData {
 }
 
 export interface IRequestAddPlayerMessage extends IMessage {
-    type: EnumMessageType.REQUEST_ADD_PLAYER;
+    type: typeof MESSAGE_TYPE.REQUEST_ADD_PLAYER;
     data: IRequestAddPlayerData;
 }
 
@@ -77,7 +56,7 @@ export interface IRequestUpdatePlayerData {
 }
 
 export interface IRequestUpdatePlayerMessage extends IMessage {
-    type: EnumMessageType.REQUEST_UPDATE_PLAYER;
+    type: typeof MESSAGE_TYPE.REQUEST_UPDATE_PLAYER;
     data: IRequestUpdatePlayerData;
 }
 
@@ -87,21 +66,21 @@ export interface IRequestUpdateScoreData {
 }
 
 export interface IRequestUpdateScoreMessage extends IMessage {
-    type: EnumMessageType.REQUEST_UPDATE_SCORE;
+    type: typeof MESSAGE_TYPE.REQUEST_UPDATE_SCORE;
     data: IRequestUpdateScoreData;
 }
 
 export interface IRequestJoinExistingData {}
 
 export interface IRequestJoinExistingMessage extends IMessage {
-    type: EnumMessageType.REQUEST_JOIN_EXISTING;
+    type: typeof MESSAGE_TYPE.REQUEST_JOIN_EXISTING;
     data: IRequestJoinExistingData;
 }
 
 export interface IRequestLeaveExistingData {}
 
 export interface IRequestLeaveExistingMessage extends IMessage {
-    type: EnumMessageType.REQUEST_LEAVE_EXISTING;
+    type: typeof MESSAGE_TYPE.REQUEST_LEAVE_EXISTING;
     data: IRequestLeaveExistingData;
 }
 
@@ -109,12 +88,12 @@ export interface IResponseData {
     success: boolean;
     message?: string;
     request: {
-        type: EnumMessageType;
+        type: keyof typeof MESSAGE_TYPE;
     };
     scorePadData: IScorePadData;
 }
 export interface IResponseMessage extends IMessage {
-    type: EnumMessageType.RESPONSE_MESSAGE;
+    type: typeof MESSAGE_TYPE.RESPONSE_MESSAGE;
     data: IResponseData;
 }
 

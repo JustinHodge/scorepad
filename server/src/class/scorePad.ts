@@ -1,6 +1,5 @@
+import { MESSAGE_TYPE, PLAYER_COLORS } from '../../../globalConstants';
 import {
-    EnumMessageType,
-    EnumPlayerColors,
     IPlayers,
     IRequestUpdatePlayerData,
     IResponseMessage,
@@ -41,13 +40,13 @@ export class ScorePad {
     private buildPlayers = (startScore: number, numberToBuild: number) => {
         for (let i = 0; i < numberToBuild; i++) {
             const randomColorIndex = Math.floor(
-                Math.random() * Object.keys(EnumPlayerColors).length
+                Math.random() * Object.keys(PLAYER_COLORS).length
             );
             const randomColorKey =
-                EnumPlayerColors[
-                    Object.keys(EnumPlayerColors)[
+                PLAYER_COLORS[
+                    Object.keys(PLAYER_COLORS)[
                         randomColorIndex
-                    ] as keyof typeof EnumPlayerColors
+                    ] as keyof typeof PLAYER_COLORS
                 ];
             const playerId = crypto.randomUUID();
 
@@ -123,12 +122,12 @@ export class ScorePad {
 
         leavingWebSocket.send(
             JSON.stringify({
-                type: EnumMessageType.RESPONSE_MESSAGE,
+                type: MESSAGE_TYPE.RESPONSE_MESSAGE,
                 data: {
                     success: true,
                     message: 'You have left the score pad',
                     request: {
-                        type: EnumMessageType.REQUEST_LEAVE_EXISTING,
+                        type: MESSAGE_TYPE.REQUEST_LEAVE_EXISTING,
                         scorePadId: this.scorePadId,
                         data: {},
                     },

@@ -1,6 +1,5 @@
 import { createContext, useMemo, useState } from 'react';
 import {
-    EnumMessageType,
     IRequestAddPlayerMessage,
     IRequestJoinExistingMessage,
     IRequestLeaveExistingMessage,
@@ -13,6 +12,7 @@ import {
     IScorePadData,
     ISystemMessage,
 } from '../../../types';
+import { MESSAGE_TYPE } from '../../../globalConstants';
 
 interface IScorePadContext {
     isConnected: boolean;
@@ -49,7 +49,7 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
                 | ISystemMessage;
             console.log(parsedData);
 
-            if (parsedData.type === EnumMessageType.SYSTEM_MESSAGE) {
+            if (parsedData.type === MESSAGE_TYPE.SYSTEM_MESSAGE) {
                 console.log(parsedData.data.message);
                 return;
             }
@@ -64,7 +64,7 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
                 },
             } = JSON.parse(event.data) as IResponseMessage;
 
-            if (type !== EnumMessageType.RESPONSE_MESSAGE) {
+            if (type !== MESSAGE_TYPE.RESPONSE_MESSAGE) {
                 console.error(
                     `Received a non-response message from the server: ${event.data}`
                 );
@@ -97,7 +97,7 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
         startScore: number
     ) => {
         const message: IRequestNewPadMessage = {
-            type: EnumMessageType.REQUEST_NEW_PAD,
+            type: MESSAGE_TYPE.REQUEST_NEW_PAD,
             scorePadId: scorePadData.scorePadId,
             data: {
                 numberOfPlayers,
@@ -110,7 +110,7 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
 
     const requestAddPlayer = (startScore: number) => {
         const message: IRequestAddPlayerMessage = {
-            type: EnumMessageType.REQUEST_ADD_PLAYER,
+            type: MESSAGE_TYPE.REQUEST_ADD_PLAYER,
             scorePadId: scorePadData.scorePadId,
             data: {
                 startScore,
@@ -122,7 +122,7 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
 
     const requestJoinExisting = (scorePadId: string) => {
         const message: IRequestJoinExistingMessage = {
-            type: EnumMessageType.REQUEST_JOIN_EXISTING,
+            type: MESSAGE_TYPE.REQUEST_JOIN_EXISTING,
             scorePadId,
             data: {},
         };
@@ -132,7 +132,7 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
 
     const requestLeaveExisting = () => {
         const message: IRequestLeaveExistingMessage = {
-            type: EnumMessageType.REQUEST_LEAVE_EXISTING,
+            type: MESSAGE_TYPE.REQUEST_LEAVE_EXISTING,
             scorePadId: scorePadData.scorePadId,
             data: {},
         };
@@ -144,7 +144,7 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
         updatedPlayerData: IRequestUpdatePlayerData
     ) => {
         const message: IRequestUpdatePlayerMessage = {
-            type: EnumMessageType.REQUEST_UPDATE_PLAYER,
+            type: MESSAGE_TYPE.REQUEST_UPDATE_PLAYER,
             scorePadId: scorePadData.scorePadId,
             data: updatedPlayerData,
         };
@@ -156,7 +156,7 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
         updatedPlayerScore: IRequestUpdateScoreData
     ) => {
         const message: IRequestUpdateScoreMessage = {
-            type: EnumMessageType.REQUEST_UPDATE_SCORE,
+            type: MESSAGE_TYPE.REQUEST_UPDATE_SCORE,
             scorePadId: scorePadData.scorePadId,
             data: updatedPlayerScore,
         };

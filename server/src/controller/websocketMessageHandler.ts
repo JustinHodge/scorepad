@@ -1,6 +1,5 @@
 import { WebSocket } from 'ws';
 import {
-    EnumMessageType,
     IRequestMessage,
     IRequestAddPlayerData,
     IRequestNewPadData,
@@ -10,6 +9,7 @@ import {
 } from '../../../types';
 import { ScorePads } from '../class/scorePads';
 import { ScorePad } from '../class/scorePad';
+import { MESSAGE_TYPE } from '../../../globalConstants';
 
 export const websocketMessageHandler = (
     data: IRequestMessage,
@@ -18,7 +18,7 @@ export const websocketMessageHandler = (
 ) => {
     const { type, data: requestData, scorePadId } = data;
     let response: IResponseMessage = {
-        type: EnumMessageType.RESPONSE_MESSAGE,
+        type: MESSAGE_TYPE.RESPONSE_MESSAGE,
         scorePadId: scorePadId,
         data: {
             success: false,
@@ -32,7 +32,7 @@ export const websocketMessageHandler = (
     const existingScorePad = scorePads.getScorePad(scorePadId);
 
     const buildHandlerErrorMessage = (
-        messageType: EnumMessageType,
+        messageType: keyof typeof MESSAGE_TYPE,
         providedData: IRequestMessage
     ) => {
         return `Incorrect data provided to ${messageType}: ${JSON.stringify(
@@ -41,12 +41,12 @@ export const websocketMessageHandler = (
     };
 
     const handlers = {
-        [EnumMessageType.REQUEST_JOIN_EXISTING]: (): ScorePad => {
+        [MESSAGE_TYPE.REQUEST_JOIN_EXISTING]: (): ScorePad => {
             // TODO: better error handling for invalid scorePadId
             if (!existingScorePad) {
                 throw new Error(
                     buildHandlerErrorMessage(
-                        EnumMessageType.REQUEST_JOIN_EXISTING,
+                        MESSAGE_TYPE.REQUEST_JOIN_EXISTING,
                         data
                     )
                 );
@@ -55,20 +55,17 @@ export const websocketMessageHandler = (
 
             return existingScorePad ?? { players: {}, scorePadId: '' };
         },
-        [EnumMessageType.REQUEST_LEAVE_EXISTING]: (): ScorePad => {
+        [MESSAGE_TYPE.REQUEST_LEAVE_EXISTING]: (): ScorePad => {
             existingScorePad.leaveGame(sourceWebSocket);
             return existingScorePad;
         },
-        [EnumMessageType.REQUEST_NEW_PAD]: (): ScorePad => {
+        [MESSAGE_TYPE.REQUEST_NEW_PAD]: (): ScorePad => {
             const { numberOfPlayers, startScore } =
                 requestData as IRequestNewPadData;
 
             if (!numberOfPlayers || startScore === undefined) {
                 throw new Error(
-                    buildHandlerErrorMessage(
-                        EnumMessageType.REQUEST_NEW_PAD,
-                        data
-                    )
+                    buildHandlerErrorMessage(MESSAGE_TYPE.REQUEST_NEW_PAD, data)
                 );
             }
 
@@ -80,13 +77,13 @@ export const websocketMessageHandler = (
 
             return newScorePad;
         },
-        [EnumMessageType.REQUEST_ADD_PLAYER]: (): ScorePad => {
+        [MESSAGE_TYPE.REQUEST_ADD_PLAYER]: (): ScorePad => {
             const { startScore } = requestData as IRequestAddPlayerData;
 
             if (startScore === undefined) {
                 throw new Error(
                     buildHandlerErrorMessage(
-                        EnumMessageType.REQUEST_ADD_PLAYER,
+                        MESSAGE_TYPE.REQUEST_ADD_PLAYER,
                         data
                     )
                 );
@@ -96,14 +93,14 @@ export const websocketMessageHandler = (
 
             return existingScorePad;
         },
-        [EnumMessageType.REQUEST_UPDATE_PLAYER]: (): ScorePad => {
+        [MESSAGE_TYPE.REQUEST_UPDATE_PLAYER]: (): ScorePad => {
             const { playerId, newName, newColor } =
                 requestData as IRequestUpdatePlayerData;
 
             if (!playerId) {
                 throw new Error(
                     buildHandlerErrorMessage(
-                        EnumMessageType.REQUEST_UPDATE_PLAYER,
+                        MESSAGE_TYPE.REQUEST_UPDATE_PLAYER,
                         data
                     )
                 );
@@ -113,14 +110,14 @@ export const websocketMessageHandler = (
 
             return existingScorePad;
         },
-        [EnumMessageType.REQUEST_UPDATE_SCORE]: (): ScorePad => {
+        [MESSAGE_TYPE.REQUEST_UPDATE_SCORE]: (): ScorePad => {
             const { playerId, newScore } =
                 requestData as IRequestUpdateScoreData;
 
             if (!playerId || !newScore) {
                 throw new Error(
                     buildHandlerErrorMessage(
-                        EnumMessageType.REQUEST_UPDATE_SCORE,
+                        MESSAGE_TYPE.REQUEST_UPDATE_SCORE,
                         data
                     )
                 );
