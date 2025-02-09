@@ -4,8 +4,8 @@ import cors from 'cors';
 import { websocketMessageHandler } from './controller/websocketMessageHandler';
 import ScorePads from './class/scorePads';
 import { WebSocketServer } from 'ws';
-import { ISystemMessage } from '../../types';
-import { MESSAGE_TYPE } from '../../globalConstants';
+import { ISystemMessage } from '../types';
+import { MESSAGE_TYPE } from '../globalConstants';
 
 dotenv.config();
 
