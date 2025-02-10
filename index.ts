@@ -4,8 +4,9 @@ import cors from 'cors';
 import { websocketMessageHandler } from './controller/websocketMessageHandler';
 import ScorePads from './class/scorePads';
 import { WebSocketServer } from 'ws';
-import { ISystemMessage } from '../types';
-import { MESSAGE_TYPE } from '../globalConstants';
+import { ISystemMessage } from './types';
+import { MESSAGE_TYPE } from './globalConstants';
+import path from 'path';
 
 dotenv.config();
 
@@ -21,9 +22,11 @@ const scorePads = new ScorePads();
 
 app.use(cors());
 
+app.use(express.static(path.resolve('../public')));
+
 app.get('/', (req: Request, res: Response) => {
     process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging'
-        ? res.status(403).send('Forbidden')
+        ? res.sendFile(path.resolve('../public/client/index.html'))
         : res.send('Development Server. Use Vite Frontend.');
 });
 

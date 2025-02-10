@@ -6,10 +6,10 @@ import {
     IRequestUpdatePlayerData,
     IRequestUpdateScoreData,
     IResponseMessage,
-} from '../../types';
+} from '../types';
 import { ScorePads } from '../class/scorePads';
 import { ScorePad } from '../class/scorePad';
-import { MESSAGE_TYPE } from '../../globalConstants';
+import { MESSAGE_TYPE } from '../globalConstants';
 
 export const websocketMessageHandler = (
     data: IRequestMessage,

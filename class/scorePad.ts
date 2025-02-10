@@ -1,9 +1,5 @@
-import { MESSAGE_TYPE, PLAYER_COLORS } from '../../globalConstants';
-import {
-    IPlayers,
-    IRequestUpdatePlayerData,
-    IResponseMessage,
-} from '../../types';
+import { MESSAGE_TYPE, PLAYER_COLORS } from '../globalConstants';
+import { IPlayers, IRequestUpdatePlayerData, IResponseMessage } from '../types';
 
 import { WebSocket } from 'ws';
 
