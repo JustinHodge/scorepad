@@ -56,10 +56,10 @@ jobs:
                   username: ${{ secrets.SSH_USER }}
                   script: |
                       cd /var/www
-                      systemctl stop ${{ github.event.repository.name }}
+                      sudo systemctl stop ${{ github.event.repository.name }}
                       rm -rf ${{ github.event.repository.name }}
                       git clone -b deploy --single-branch https://github.com/JustinHodge/${{ github.event.repository.name }}
                       touch /var/www/${{ github.event.repository.name }}/.env
                       echo "PORT=${{ secrets.PORT }}" >> /var/www/${{ github.event.repository.name }}/.env
                       echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> /var/www/${{ github.event.repository.name }}/.env
-                      systemctl start ${{ github.event.repository.name }}
+                      sudo systemctl start ${{ github.event.repository.name }}
