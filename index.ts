@@ -22,11 +22,11 @@ const scorePads = new ScorePads();
 
 app.use(cors());
 
-app.use(express.static(path.resolve('../public')));
+app.use(express.static(path.resolve('./public')));
 
 app.get('/', (req: Request, res: Response) => {
     process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging'
-        ? res.sendFile(path.resolve('../public/client/index.html'))
+        ? res.sendFile(path.resolve('./public/client/index.html'))
         : res.send('Development Server. Use Vite Frontend.');
 });
 
