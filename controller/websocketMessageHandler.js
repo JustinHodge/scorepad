@@ -4,7 +4,21 @@ exports.websocketMessageHandler = void 0;
 const scorePad_1 = require("../class/scorePad");
 const globalConstants_1 = require("../globalConstants");
 const websocketMessageHandler = (data, scorePads, sourceWebSocket) => {
-    const { type, data: requestData, scorePadId } = data;
+    const { type } = data;
+    if (type === globalConstants_1.MESSAGE_TYPE.SYSTEM_MESSAGE) {
+        let response = {
+            type: globalConstants_1.MESSAGE_TYPE.SYSTEM_MESSAGE,
+            data: {
+                message: '',
+            },
+        };
+        if (data.data.message === 'ping') {
+            response.data.message = 'pong';
+        }
+        sourceWebSocket.send(JSON.stringify(response));
+        return;
+    }
+    const { data: requestData, scorePadId } = data;
     let response = {
         type: globalConstants_1.MESSAGE_TYPE.RESPONSE_MESSAGE,
         scorePadId: scorePadId,
