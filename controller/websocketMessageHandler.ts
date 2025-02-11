@@ -6,17 +6,36 @@ import {
     IRequestUpdatePlayerData,
     IRequestUpdateScoreData,
     IResponseMessage,
+    ISystemMessage,
 } from '../types';
 import { ScorePads } from '../class/scorePads';
 import { ScorePad } from '../class/scorePad';
 import { MESSAGE_TYPE } from '../globalConstants';
 
 export const websocketMessageHandler = (
-    data: IRequestMessage,
+    data: IRequestMessage | ISystemMessage,
     scorePads: ScorePads,
     sourceWebSocket: WebSocket
 ) => {
-    const { type, data: requestData, scorePadId } = data;
+    const { type } = data;
+    if (type === MESSAGE_TYPE.SYSTEM_MESSAGE) {
+        let response: ISystemMessage = {
+            type: MESSAGE_TYPE.SYSTEM_MESSAGE,
+            data: {
+                message: '',
+            },
+        };
+
+        if (data.data.message === 'ping') {
+            response.data.message = 'pong';
+        }
+
+        sourceWebSocket.send(JSON.stringify(response));
+
+        return;
+    }
+
+    const { data: requestData, scorePadId } = data;
     let response: IResponseMessage = {
         type: MESSAGE_TYPE.RESPONSE_MESSAGE,
         scorePadId: scorePadId,
