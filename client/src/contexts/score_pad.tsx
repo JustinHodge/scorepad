@@ -25,6 +25,8 @@ interface IScorePadContext {
     requestUpdatePlayerScore: (requestData: IRequestUpdateScoreData) => void;
 }
 
+const HEARTBEAT_TIMER_MS = 30000 as const;
+
 export const ScorepadContext = createContext<IScorePadContext>(
     {} as IScorePadContext
 );
@@ -36,12 +38,22 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
         scorePadId: '',
     });
 
-    const webSocket = useMemo(() => {
-        const hostURL = window.location.host;
+    const connectToServer = () => {
+        const hostURL = import.meta.env.VITE_SERVER_URL || window.location.host;
+        const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
 
-        const webSocket = new WebSocket(`wss://${hostURL}`);
+        const webSocket = new WebSocket(`${protocol}://${hostURL}`);
         webSocket.onopen = () => {
             setIsConnected(webSocket.readyState === 1);
+
+            setInterval(() => {
+                webSocket.send(
+                    JSON.stringify({
+                        type: MESSAGE_TYPE.SYSTEM_MESSAGE,
+                        data: { message: 'ping' },
+                    })
+                );
+            }, HEARTBEAT_TIMER_MS);
             console.log('Connected to the server');
         };
 
@@ -49,7 +61,6 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
             const parsedData = JSON.parse(event.data) as
                 | IResponseMessage
                 | ISystemMessage;
-            console.log(parsedData);
 
             if (parsedData.type === MESSAGE_TYPE.SYSTEM_MESSAGE) {
                 console.log(parsedData.data.message);
@@ -92,7 +103,9 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
         };
 
         return webSocket;
-    }, []);
+    };
+
+    const webSocket = useMemo(connectToServer, []);
 
     const startNewScorePad = async (
         numberOfPlayers: number,
