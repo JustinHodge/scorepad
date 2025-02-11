@@ -37,7 +37,9 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
     });
 
     const webSocket = useMemo(() => {
-        const webSocket = new WebSocket('ws://localhost:3000');
+        const hostURL = window.location.host;
+
+        const webSocket = new WebSocket(`ws://${hostURL}:3000`);
         webSocket.onopen = () => {
             setIsConnected(webSocket.readyState === 1);
             console.log('Connected to the server');
