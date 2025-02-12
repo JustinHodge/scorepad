@@ -23,6 +23,7 @@ interface IScorePadContext {
     requestLeaveExisting: () => void;
     requestUpdatePlayerData: (requestData: IRequestUpdatePlayerData) => void;
     requestUpdatePlayerScore: (requestData: IRequestUpdateScoreData) => void;
+    attemptReconnect: () => void;
 }
 
 const HEARTBEAT_TIMER_MS = 30000 as const;
@@ -37,6 +38,7 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
         players: {},
         scorePadId: '',
     });
+    const [connectCount, setConnectCount] = useState(1);
 
     const connectToServer = () => {
         const hostURL = import.meta.env.VITE_SERVER_URL || window.location.host;
@@ -105,7 +107,8 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
         return webSocket;
     };
 
-    const webSocket = useMemo(connectToServer, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const webSocket = useMemo(connectToServer, [connectCount]);
 
     const startNewScorePad = async (
         numberOfPlayers: number,
@@ -121,6 +124,11 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
         };
 
         webSocket.send(JSON.stringify(message));
+    };
+
+    const attemptReconnect = () => {
+        webSocket && webSocket.close();
+        setConnectCount((c) => c + 1);
     };
 
     const requestAddPlayer = (startScore: number) => {
@@ -188,6 +196,7 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
         requestLeaveExisting,
         requestUpdatePlayerData,
         requestUpdatePlayerScore,
+        attemptReconnect,
     };
 
     return (
