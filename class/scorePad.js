@@ -6,9 +6,6 @@ class ScorePad {
     constructor(numberOfPlayers, startScore, webSocket) {
         this.getPlayer = (playerId) => {
             const player = this.players[playerId];
-            if (!player) {
-                throw new Error('Player not found');
-            }
             return player;
         };
         this.buildPlayer = (startScore) => {
