@@ -22,10 +22,6 @@ export class ScorePad {
     private getPlayer = (playerId: string) => {
         const player = this.players[playerId];
 
-        if (!player) {
-            throw new Error('Player not found');
-        }
-
         return player;
     };
 

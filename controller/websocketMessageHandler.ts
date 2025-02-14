@@ -50,26 +50,9 @@ export const websocketMessageHandler = (
 
     const existingScorePad = scorePads.getScorePad(scorePadId);
 
-    const buildHandlerErrorMessage = (
-        messageType: keyof typeof MESSAGE_TYPE,
-        providedData: IRequestMessage
-    ) => {
-        return `Incorrect data provided to ${messageType}: ${JSON.stringify(
-            providedData
-        )}`;
-    };
-
     const handlers = {
         [MESSAGE_TYPE.REQUEST_JOIN_EXISTING]: (): ScorePad => {
             // TODO: better error handling for invalid scorePadId
-            if (!existingScorePad) {
-                throw new Error(
-                    buildHandlerErrorMessage(
-                        MESSAGE_TYPE.REQUEST_JOIN_EXISTING,
-                        data
-                    )
-                );
-            }
             existingScorePad.joinGame(sourceWebSocket);
 
             return existingScorePad ?? { players: {}, scorePadId: '' };
@@ -82,33 +65,19 @@ export const websocketMessageHandler = (
             const { numberOfPlayers, startScore } =
                 requestData as IRequestNewPadData;
 
-            if (!numberOfPlayers || startScore === undefined) {
-                throw new Error(
-                    buildHandlerErrorMessage(MESSAGE_TYPE.REQUEST_NEW_PAD, data)
-                );
-            }
-
             const newScorePad = scorePads.createNewScorePad(
-                numberOfPlayers,
-                startScore,
+                numberOfPlayers || 0,
+                startScore || 0,
                 sourceWebSocket
             );
-
             return newScorePad;
         },
         [MESSAGE_TYPE.REQUEST_ADD_PLAYER]: (): ScorePad => {
             const { startScore } = requestData as IRequestAddPlayerData;
 
-            if (startScore === undefined) {
-                throw new Error(
-                    buildHandlerErrorMessage(
-                        MESSAGE_TYPE.REQUEST_ADD_PLAYER,
-                        data
-                    )
-                );
+            if (startScore !== undefined) {
+                existingScorePad.addPlayer(startScore);
             }
-
-            existingScorePad.addPlayer(startScore);
 
             return existingScorePad;
         },
@@ -116,16 +85,9 @@ export const websocketMessageHandler = (
             const { playerId, newName, newColor } =
                 requestData as IRequestUpdatePlayerData;
 
-            if (!playerId) {
-                throw new Error(
-                    buildHandlerErrorMessage(
-                        MESSAGE_TYPE.REQUEST_UPDATE_PLAYER,
-                        data
-                    )
-                );
+            if (playerId) {
+                existingScorePad.updatePlayer({ playerId, newName, newColor });
             }
-
-            existingScorePad.updatePlayer({ playerId, newName, newColor });
 
             return existingScorePad;
         },
@@ -133,15 +95,13 @@ export const websocketMessageHandler = (
             const { playerId, newScore } =
                 requestData as IRequestUpdateScoreData;
 
-            if (!playerId || !newScore) {
-                throw new Error(
-                    buildHandlerErrorMessage(
-                        MESSAGE_TYPE.REQUEST_UPDATE_SCORE,
-                        data
-                    )
+            if (playerId && newScore) {
+                existingScorePad.updatePlayerScore(playerId, newScore);
+            } else {
+                console.error(
+                    'No playerId or newScore provided to update score'
                 );
             }
-            existingScorePad.updatePlayerScore(playerId, newScore);
 
             return existingScorePad;
         },
@@ -149,11 +109,6 @@ export const websocketMessageHandler = (
 
     if (handlers[type]) {
         const scorePad = handlers[type]();
-        if (!(scorePad instanceof ScorePad)) {
-            throw new Error(
-                `Incorrect return value of message handler function for type ${type}.`
-            );
-        }
 
         response.data.success = true;
         response.data.scorePadData = scorePad.getScorePadData();
@@ -163,5 +118,5 @@ export const websocketMessageHandler = (
         return;
     }
 
-    throw new Error(`No handler found for type ${type}`);
+    console.error(`No handler found for type ${type}`);
 };

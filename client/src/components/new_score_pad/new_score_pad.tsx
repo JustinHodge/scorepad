@@ -10,6 +10,7 @@ export const NewScorepad = () => {
     useEffect(() => {
         const queryParams = new URL(document.location.toString()).searchParams;
         const scorePadId = queryParams.get('pad_id');
+
         if (scorePadId) {
             console.log('Joining Score Pad: ', scorePadId);
             requestJoinExisting(scorePadId);
