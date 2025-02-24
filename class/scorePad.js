@@ -51,8 +51,9 @@ class ScorePad {
             }
         };
         this.updatePlayerScore = (playerId, newScore) => {
+            var _a;
             const player = this.getPlayer(playerId);
-            player.score = newScore;
+            player.score = (_a = newScore !== null && newScore !== void 0 ? newScore : player.score) !== null && _a !== void 0 ? _a : 0;
         };
         this.sendBroadcastMessage = (message) => {
             this.webSockets.forEach((webSocket) => {

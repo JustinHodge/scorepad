@@ -61,7 +61,7 @@ const websocketMessageHandler = (data, scorePads, sourceWebSocket) => {
         },
         [globalConstants_1.MESSAGE_TYPE.REQUEST_UPDATE_SCORE]: () => {
             const { playerId, newScore } = requestData;
-            if (playerId && newScore) {
+            if (playerId) {
                 existingScorePad.updatePlayerScore(playerId, newScore);
             }
             else {
