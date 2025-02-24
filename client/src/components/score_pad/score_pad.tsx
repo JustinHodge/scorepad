@@ -62,7 +62,7 @@ export const Scorepad = () => {
                 <em
                     title='Click to copy shareable url'
                     className='score-pad-heading'
-                    onClick={() => {
+                    onPointerDown={() => {
                         const url = new URL(window.location.href);
                         navigator.clipboard.writeText(url.toString());
                         alert('Copied Url: ' + url.toString());
