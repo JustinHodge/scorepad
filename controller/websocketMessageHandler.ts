@@ -95,7 +95,7 @@ export const websocketMessageHandler = (
             const { playerId, newScore } =
                 requestData as IRequestUpdateScoreData;
 
-            if (playerId && newScore) {
+            if (playerId) {
                 existingScorePad.updatePlayerScore(playerId, newScore);
             } else {
                 console.error(

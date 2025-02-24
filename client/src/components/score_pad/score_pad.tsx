@@ -23,7 +23,20 @@ export const Scorepad = () => {
     const [updatePlayerScore, setUpdatePlayerScore] = useState<{
         [playerId: string]: IRequestUpdateScoreData;
     }>({});
-    // TODO add focus lock for rerenders after input
+
+    const buildScore = (
+        score: string | number | undefined | null | typeof NaN
+    ) => {
+        if (!score) {
+            return 0;
+        }
+
+        if (Number.isNaN(score)) {
+            return 0;
+        }
+
+        return Number.parseInt(score.toString());
+    };
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
@@ -76,7 +89,8 @@ export const Scorepad = () => {
                             type='number'
                             value={
                                 updatePlayerScore[player.id ?? '']?.newScore ??
-                                player.score
+                                player.score ??
+                                '0'
                             }
                             onChange={(e) => {
                                 if (!player.id) {
@@ -84,9 +98,11 @@ export const Scorepad = () => {
                                     return;
                                 }
 
+                                const newScore = buildScore(e.target.value);
+
                                 const updateData = {
                                     playerId: player.id,
-                                    newScore: Number.parseInt(e.target.value),
+                                    newScore: newScore,
                                 };
 
                                 setUpdatePlayerScore({
@@ -103,9 +119,10 @@ export const Scorepad = () => {
                 <input
                     type='number'
                     value={newPlayerScore}
-                    onChange={(e) =>
-                        setNewPlayerScore(Number.parseInt(e.target.value))
-                    }
+                    onChange={(e) => {
+                        const newPlayerScore = buildScore(e.target.value);
+                        setNewPlayerScore(newPlayerScore);
+                    }}
                 ></input>
                 <button
                     type='button'

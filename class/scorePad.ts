@@ -91,10 +91,13 @@ export class ScorePad {
         }
     };
 
-    public updatePlayerScore = (playerId: string, newScore: number) => {
+    public updatePlayerScore = (
+        playerId: string,
+        newScore: number | null | undefined
+    ) => {
         const player = this.getPlayer(playerId);
 
-        player.score = newScore;
+        player.score = newScore ?? player.score ?? 0;
     };
 
     public sendBroadcastMessage = (message: IResponseMessage) => {
