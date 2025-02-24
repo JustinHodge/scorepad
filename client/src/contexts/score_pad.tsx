@@ -92,6 +92,15 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
             }
 
             setScorePadData(newScorePadData);
+
+            if (request.type === MESSAGE_TYPE.REQUEST_NEW_PAD) {
+                const currentUrl = new URL(window.location.toString());
+                currentUrl.searchParams.set(
+                    'pad_id',
+                    newScorePadData.scorePadId
+                );
+                window.location.replace(currentUrl.toString());
+            }
         };
 
         webSocket.onerror = (event) => {

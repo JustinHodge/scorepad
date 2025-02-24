@@ -10,7 +10,7 @@ const INPUT_REQUEST_DELAY_MS = 500;
 
 export const Scorepad = () => {
     const {
-        scorePadData: { players, scorePadId },
+        scorePadData: { players },
         addPlayer,
         requestLeaveExisting,
         requestUpdatePlayerData,
@@ -58,7 +58,19 @@ export const Scorepad = () => {
 
     return (
         <div>
-            <h1>ScorePad: {scorePadId}</h1>
+            <h2>
+                <em
+                    title='Click to copy shareable url'
+                    className='score-pad-heading'
+                    onClick={() => {
+                        const url = new URL(window.location.href);
+                        navigator.clipboard.writeText(url.toString());
+                        alert('Copied Url: ' + url.toString());
+                    }}
+                >
+                    Click to Share this Pad!
+                </em>
+            </h2>
             <div className='score-pad'>
                 {Object.values(players).map((player) => (
                     <div key={player.id} className='player'>
