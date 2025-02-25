@@ -51,7 +51,7 @@ export const websocketMessageHandler = (
     const existingScorePad = scorePads.getScorePad(scorePadId);
 
     const handlers = {
-        [MESSAGE_TYPE.REQUEST_JOIN_EXISTING]: (): ScorePad => {
+        [MESSAGE_TYPE.REQUEST_JOIN_EXISTING]: (): ScorePad | null => {
             if (!existingScorePad) {
                 const response: IResponseMessage = {
                     type: MESSAGE_TYPE.RESPONSE_MESSAGE,
@@ -66,6 +66,8 @@ export const websocketMessageHandler = (
                 };
 
                 sourceWebSocket.send(JSON.stringify(response));
+
+                return null;
             }
 
             existingScorePad.joinGame(sourceWebSocket);
@@ -124,6 +126,10 @@ export const websocketMessageHandler = (
 
     if (handlers[type]) {
         const scorePad = handlers[type]();
+
+        if (!scorePad) {
+            return;
+        }
 
         response.data.success = true;
         response.data.scorePadData = scorePad.getScorePadData();
