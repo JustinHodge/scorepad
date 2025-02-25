@@ -32,28 +32,39 @@ export const StartNew = () => {
     };
 
     return (
-        <form>
-            <label>Number of Players</label>
-            <input
-                type='number'
-                value={`${numberOfPlayers}`}
-                onChange={playerNumberChangeHandler}
-            ></input>
-            <label>Starting Score</label>
-            <input
-                type='number'
-                value={`${startingScore}`}
-                onChange={startingScoreChangeHandler}
-            ></input>
-            <button
-                type='button'
-                onClick={() => {
-                    startNewScorePad(numberOfPlayers, startingScore);
-                }}
-            >
-                Start New Score Pad
-            </button>
-        </form>
+        <div className='row'>
+            <form className='col-12'>
+                <div className='pt-2'>
+                    <label className='form-label'>Number of Players</label>
+                    <input
+                        type='number'
+                        className='form-control'
+                        value={`${numberOfPlayers}`}
+                        onChange={playerNumberChangeHandler}
+                    ></input>
+                </div>
+                <div className='pt-2'>
+                    <label className='form-label'>Starting Score</label>
+                    <input
+                        type='number'
+                        className='form-control'
+                        value={`${startingScore}`}
+                        onChange={startingScoreChangeHandler}
+                    ></input>
+                </div>
+                <div className='float-end pt-2'>
+                    <button
+                        className='btn btn-primary'
+                        type='button'
+                        onClick={() => {
+                            startNewScorePad(numberOfPlayers, startingScore);
+                        }}
+                    >
+                        Start New Score Pad
+                    </button>
+                </div>
+            </form>
+        </div>
     );
 };
 export default StartNew;

@@ -16,7 +16,6 @@ export const Scorepad = () => {
         requestUpdatePlayerData,
         requestUpdatePlayerScore,
     } = useContext(ScorepadContext);
-    const [newPlayerScore, setNewPlayerScore] = useState<number>(0);
     const [updatePlayerData, setUpdatePlayerData] = useState<{
         [playerId: string]: IRequestUpdatePlayerData;
     }>({});
@@ -57,101 +56,101 @@ export const Scorepad = () => {
     });
 
     return (
-        <div>
-            <h2>
-                <em
-                    title='Click to copy shareable url'
-                    className='score-pad-heading'
-                    onPointerDown={() => {
-                        const url = new URL(window.location.href);
-                        navigator.clipboard.writeText(url.toString());
-                        alert('Copied Url: ' + url.toString());
-                    }}
-                >
-                    Click to Share this Pad!
-                </em>
-            </h2>
-            <div className='score-pad'>
-                {Object.values(players).map((player) => (
-                    <div key={player.id} className='player'>
-                        <input
-                            type='text'
-                            value={
-                                updatePlayerData[player.id ?? '']?.newName ??
-                                player.name
-                            }
-                            onChange={(e) => {
-                                if (!player.id) {
-                                    console.error('no player id');
-                                    return;
+        <div className='container'>
+            <div className='row'>
+                <h2>
+                    <em
+                        title='Click to copy shareable url'
+                        className='score-pad-heading'
+                        onPointerDown={() => {
+                            const url = new URL(window.location.href);
+                            navigator.clipboard.writeText(url.toString());
+                            alert('Copied Url: ' + url.toString());
+                        }}
+                    >
+                        Click to Share this Pad!
+                    </em>
+                </h2>
+                <form onSubmit={(e) => e.preventDefault()}>
+                    {Object.values(players).map((player) => (
+                        <div key={player.id} className='row my-2'>
+                            <input
+                                className='form-control col mx-1'
+                                type='text'
+                                value={
+                                    updatePlayerData[player.id ?? '']
+                                        ?.newName ?? player.name
                                 }
+                                onChange={(e) => {
+                                    if (!player.id) {
+                                        console.error('no player id');
+                                        return;
+                                    }
 
-                                const updateData = {
-                                    playerId: player.id,
-                                    newName: e.target.value,
-                                };
+                                    const updateData = {
+                                        playerId: player.id,
+                                        newName: e.target.value,
+                                    };
 
-                                setUpdatePlayerData({
-                                    ...updatePlayerData,
-                                    [player.id]: updateData,
-                                });
-                            }}
-                        ></input>
-                        <input
-                            type='number'
-                            value={
-                                updatePlayerScore[player.id ?? '']?.newScore ??
-                                player.score ??
-                                '0'
-                            }
-                            onChange={(e) => {
-                                if (!player.id) {
-                                    console.error('no player id');
-                                    return;
+                                    setUpdatePlayerData({
+                                        ...updatePlayerData,
+                                        [player.id]: updateData,
+                                    });
+                                }}
+                            ></input>
+                            <input
+                                className='form-control col mx-1'
+                                type='number'
+                                value={
+                                    updatePlayerScore[player.id ?? '']
+                                        ?.newScore ??
+                                    player.score ??
+                                    '0'
                                 }
+                                onChange={(e) => {
+                                    if (!player.id) {
+                                        console.error('no player id');
+                                        return;
+                                    }
 
-                                const newScore = buildScore(e.target.value);
+                                    const newScore = buildScore(e.target.value);
 
-                                const updateData = {
-                                    playerId: player.id,
-                                    newScore: newScore,
-                                };
+                                    const updateData = {
+                                        playerId: player.id,
+                                        newScore: newScore,
+                                    };
 
-                                setUpdatePlayerScore({
-                                    ...updatePlayerScore,
-                                    [player.id]: updateData,
-                                });
+                                    setUpdatePlayerScore({
+                                        ...updatePlayerScore,
+                                        [player.id]: updateData,
+                                    });
+                                }}
+                            ></input>
+                        </div>
+                    ))}
+                    <div className='row my-1'>
+                        <button
+                            className='btn btn-primary input-group-text'
+                            type='button'
+                            onClick={() => {
+                                addPlayer(0);
                             }}
-                        ></input>
+                        >
+                            Add Player
+                        </button>
                     </div>
-                ))}
-            </div>
-            <div>
-                <label>NewPlayerScore</label>
-                <input
-                    type='number'
-                    value={newPlayerScore}
-                    onChange={(e) => {
-                        const newPlayerScore = buildScore(e.target.value);
-                        setNewPlayerScore(newPlayerScore);
-                    }}
-                ></input>
-                <button
-                    type='button'
-                    onClick={() => {
-                        addPlayer(newPlayerScore);
-                    }}
-                >
-                    Add Player
-                </button>
-                <button
-                    type='button'
-                    onClick={() => {
-                        requestLeaveExisting();
-                    }}
-                >
-                    Leave Score Pad
-                </button>
+                    <div className='row my-1'>
+                        <button
+                            className='btn btn-danger'
+                            type='button'
+                            onClick={() => {
+                                requestLeaveExisting();
+                            }}
+                        >
+                            Leave Score Pad
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     );
