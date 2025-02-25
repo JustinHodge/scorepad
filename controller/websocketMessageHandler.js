@@ -45,6 +45,7 @@ const websocketMessageHandler = (data, scorePads, sourceWebSocket) => {
                     },
                 };
                 sourceWebSocket.send(JSON.stringify(response));
+                return null;
             }
             existingScorePad.joinGame(sourceWebSocket);
             return existingScorePad !== null && existingScorePad !== void 0 ? existingScorePad : { players: {}, scorePadId: '' };
@@ -85,6 +86,9 @@ const websocketMessageHandler = (data, scorePads, sourceWebSocket) => {
     };
     if (handlers[type]) {
         const scorePad = handlers[type]();
+        if (!scorePad) {
+            return;
+        }
         response.data.success = true;
         response.data.scorePadData = scorePad.getScorePadData();
         response.scorePadId = scorePad.getScorePadId();
