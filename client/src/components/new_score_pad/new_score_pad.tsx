@@ -3,6 +3,7 @@ import ScorepadContext from '../../contexts/score_pad';
 import JoinExisting from './components/join_existing/join_existing';
 import StartNew from './components/start_new/start_new';
 import './new_score_pad.css';
+import logo from '/scorepad_logo.svg';
 
 export const NewScorepad = () => {
     const { requestJoinExisting } = useContext(ScorepadContext);
@@ -18,7 +19,8 @@ export const NewScorepad = () => {
     }, [requestJoinExisting]);
 
     return (
-        <div>
+        <div className='row justify-content-center'>
+            <img src={logo} className='col-4 col-lg-2' alt='logo' />
             <StartNew />
             <JoinExisting />
         </div>
