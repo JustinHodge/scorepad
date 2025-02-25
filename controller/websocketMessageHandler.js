@@ -32,7 +32,20 @@ const websocketMessageHandler = (data, scorePads, sourceWebSocket) => {
     const existingScorePad = scorePads.getScorePad(scorePadId);
     const handlers = {
         [globalConstants_1.MESSAGE_TYPE.REQUEST_JOIN_EXISTING]: () => {
-            // TODO: better error handling for invalid scorePadId
+            if (!existingScorePad) {
+                const response = {
+                    type: globalConstants_1.MESSAGE_TYPE.RESPONSE_MESSAGE,
+                    scorePadId: '',
+                    data: {
+                        success: true,
+                        request: {
+                            type: data.type,
+                        },
+                        scorePadData: { players: {}, scorePadId: '' },
+                    },
+                };
+                sourceWebSocket.send(JSON.stringify(response));
+            }
             existingScorePad.joinGame(sourceWebSocket);
             return existingScorePad !== null && existingScorePad !== void 0 ? existingScorePad : { players: {}, scorePadId: '' };
         },
