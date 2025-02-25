@@ -32,7 +32,7 @@ export const StartNew = () => {
     };
 
     return (
-        <div>
+        <form>
             <label>Number of Players</label>
             <input
                 type='number'
@@ -53,7 +53,7 @@ export const StartNew = () => {
             >
                 Start New Score Pad
             </button>
-        </div>
+        </form>
     );
 };
 export default StartNew;
