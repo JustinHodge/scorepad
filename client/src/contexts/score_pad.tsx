@@ -95,7 +95,7 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
 
             if (
                 request.type === MESSAGE_TYPE.REQUEST_JOIN_EXISTING &&
-                scorePadData.scorePadId === ''
+                newScorePadData.scorePadId === ''
             ) {
                 const currentUrl = new URL(window.location.toString());
                 currentUrl.searchParams.delete('pad_id');
