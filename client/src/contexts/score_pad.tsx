@@ -93,6 +93,15 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
 
             setScorePadData(newScorePadData);
 
+            if (
+                request.type === MESSAGE_TYPE.REQUEST_JOIN_EXISTING &&
+                scorePadData.scorePadId === ''
+            ) {
+                const currentUrl = new URL(window.location.toString());
+                currentUrl.searchParams.delete('pad_id');
+                window.location.replace(currentUrl.toString());
+            }
+
             if (request.type === MESSAGE_TYPE.REQUEST_NEW_PAD) {
                 const currentUrl = new URL(window.location.toString());
                 currentUrl.searchParams.set(
