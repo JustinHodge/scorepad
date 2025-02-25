@@ -20,11 +20,9 @@ const server = app.listen(port, () => {
 const wss = new ws_1.WebSocketServer({ server: server });
 const scorePads = new scorePads_1.default();
 app.use((0, cors_1.default)());
-app.use(express_1.default.static(path_1.default.resolve('./public')));
+app.use(express_1.default.static(path_1.default.resolve(__dirname + '/public')));
 app.get('/', (req, res) => {
-    process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging'
-        ? res.sendFile(path_1.default.resolve('./public/client/index.html'))
-        : res.send('Development Server. Use Vite Frontend.');
+    res.sendFile(path_1.default.resolve(__dirname + '/public/index.html'));
 });
 app.get('/scorepads', (req, res) => {
     process.env.NODE_ENV === 'development'
