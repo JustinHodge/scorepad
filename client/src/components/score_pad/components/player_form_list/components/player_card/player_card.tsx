@@ -29,25 +29,21 @@ export const PlayerCard = ({ player }: IProps) => {
     const { requestUpdatePlayerData, requestUpdatePlayerScore } =
         useContext(ScorepadContext);
 
-    const [updatePlayerData, setUpdatePlayerData] = useState<{
-        [playerId: string]: IRequestUpdatePlayerData;
-    }>({});
-    const [updatePlayerScore, setUpdatePlayerScore] = useState<{
-        [playerId: string]: IRequestUpdateScoreData;
-    }>({});
+    const [updatePlayerData, setUpdatePlayerData] =
+        useState<IRequestUpdatePlayerData | null>(null);
+    const [updatePlayerScore, setUpdatePlayerScore] =
+        useState<IRequestUpdateScoreData | null>(null);
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
-            if (Object.keys(updatePlayerData).length > 0) {
-                Object.values(updatePlayerData).forEach((data) => {
-                    requestUpdatePlayerData(data);
-                });
+            if (updatePlayerData) {
+                requestUpdatePlayerData(updatePlayerData);
+                setUpdatePlayerData(null);
             }
 
-            if (Object.keys(updatePlayerScore).length > 0) {
-                Object.values(updatePlayerScore).forEach((data) => {
-                    requestUpdatePlayerScore(data);
-                });
+            if (updatePlayerScore) {
+                requestUpdatePlayerScore(updatePlayerScore);
+                setUpdatePlayerScore(null);
             }
         }, INPUT_REQUEST_DELAY_MS);
 
@@ -61,10 +57,7 @@ export const PlayerCard = ({ player }: IProps) => {
                     <input
                         className='form-control col mx-1'
                         type='text'
-                        value={
-                            updatePlayerData[player.id ?? '']?.newName ??
-                            player.name
-                        }
+                        value={updatePlayerData?.newName ?? player.name}
                         onChange={(e) => {
                             if (!player.id) {
                                 console.error('no player id');
@@ -76,19 +69,14 @@ export const PlayerCard = ({ player }: IProps) => {
                                 newName: e.target.value,
                             };
 
-                            setUpdatePlayerData({
-                                ...updatePlayerData,
-                                [player.id]: updateData,
-                            });
+                            setUpdatePlayerData(updateData);
                         }}
                     ></input>
                     <input
                         className='form-control col mx-1'
                         type='number'
                         value={
-                            updatePlayerScore[player.id ?? '']?.newScore ??
-                            player.score ??
-                            '0'
+                            updatePlayerScore?.newScore ?? player.score ?? '0'
                         }
                         onChange={(e) => {
                             if (!player.id) {
@@ -103,10 +91,7 @@ export const PlayerCard = ({ player }: IProps) => {
                                 newScore: newScore,
                             };
 
-                            setUpdatePlayerScore({
-                                ...updatePlayerScore,
-                                [player.id]: updateData,
-                            });
+                            setUpdatePlayerScore(updateData);
                         }}
                     ></input>
                 </div>
