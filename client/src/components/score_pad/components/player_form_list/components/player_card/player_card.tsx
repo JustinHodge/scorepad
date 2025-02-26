@@ -11,7 +11,7 @@ interface IProps {
     player: IPlayer;
 }
 
-const INPUT_REQUEST_DELAY_MS = 500;
+const INPUT_REQUEST_DELAY_MS = 50;
 
 const buildScore = (score: string | number | undefined | null | typeof NaN) => {
     if (!score) {
@@ -34,6 +34,32 @@ export const PlayerCard = ({ player }: IProps) => {
     const [updatePlayerScore, setUpdatePlayerScore] =
         useState<IRequestUpdateScoreData | null>(null);
 
+    const queueUpdateScore = (score: string | number) => {
+        const newScore = buildScore(score);
+
+        if (!player.id) {
+            console.error('no player id');
+            return;
+        }
+
+        setUpdatePlayerScore({
+            playerId: player.id,
+            newScore: newScore,
+        });
+    };
+
+    const queueUpdateName = (name: string) => {
+        if (!player.id) {
+            console.error('no player id');
+            return;
+        }
+
+        setUpdatePlayerData({
+            playerId: player.id,
+            newName: name,
+        });
+    };
+
     useEffect(() => {
         const timeoutId = setTimeout(() => {
             if (updatePlayerData) {
@@ -50,6 +76,10 @@ export const PlayerCard = ({ player }: IProps) => {
         return () => clearTimeout(timeoutId);
     });
 
+    if (!player || !player.id) {
+        return null;
+    }
+
     return (
         <div key={player.id} className='my-2 card'>
             <div className='card-body'>
@@ -59,17 +89,7 @@ export const PlayerCard = ({ player }: IProps) => {
                         type='text'
                         value={updatePlayerData?.newName ?? player.name}
                         onChange={(e) => {
-                            if (!player.id) {
-                                console.error('no player id');
-                                return;
-                            }
-
-                            const updateData = {
-                                playerId: player.id,
-                                newName: e.target.value,
-                            };
-
-                            setUpdatePlayerData(updateData);
+                            queueUpdateName(e.target.value);
                         }}
                     ></input>
                     <input
@@ -79,24 +99,16 @@ export const PlayerCard = ({ player }: IProps) => {
                             updatePlayerScore?.newScore ?? player.score ?? '0'
                         }
                         onChange={(e) => {
-                            if (!player.id) {
-                                console.error('no player id');
-                                return;
-                            }
-
-                            const newScore = buildScore(e.target.value);
-
-                            const updateData = {
-                                playerId: player.id,
-                                newScore: newScore,
-                            };
-
-                            setUpdatePlayerScore(updateData);
+                            queueUpdateScore(e.target.value);
                         }}
                     ></input>
                 </div>
             </div>
-            <PlayerCardFooter />
+            <PlayerCardFooter
+                scoreUpdateFunction={queueUpdateScore}
+                playerId={player.id}
+                currentScore={updatePlayerScore?.newScore ?? player.score ?? 0}
+            />
         </div>
     );
 };
