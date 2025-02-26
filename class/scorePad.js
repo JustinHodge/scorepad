@@ -82,6 +82,9 @@ class ScorePad {
                 },
             }));
         };
+        this.removePlayer = (playerId) => {
+            delete this.players[playerId];
+        };
         this.players = {};
         this.scorePadId = crypto.randomUUID();
         this.buildPlayers(startScore, numberOfPlayers);

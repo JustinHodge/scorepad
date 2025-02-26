@@ -83,6 +83,13 @@ const websocketMessageHandler = (data, scorePads, sourceWebSocket) => {
             }
             return existingScorePad;
         },
+        [globalConstants_1.MESSAGE_TYPE.REQUEST_REMOVE_PLAYER]: () => {
+            const { playerId } = requestData;
+            if (playerId) {
+                existingScorePad.removePlayer(playerId);
+            }
+            return existingScorePad;
+        },
     };
     if (handlers[type]) {
         const scorePad = handlers[type]();
