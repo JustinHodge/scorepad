@@ -4,6 +4,7 @@ import {
     IRequestJoinExistingMessage,
     IRequestLeaveExistingMessage,
     IRequestNewPadMessage,
+    IRequestRemovePlayerMessage,
     IRequestUpdatePlayerData,
     IRequestUpdatePlayerMessage,
     IRequestUpdateScoreData,
@@ -24,6 +25,7 @@ interface IScorePadContext {
     requestUpdatePlayerData: (requestData: IRequestUpdatePlayerData) => void;
     requestUpdatePlayerScore: (requestData: IRequestUpdateScoreData) => void;
     attemptReconnect: () => void;
+    requestRemovePlayer: (playerId: string) => void;
 }
 
 const HEARTBEAT_TIMER_MS = 30000 as const;
@@ -199,6 +201,18 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
         webSocket.send(JSON.stringify(message));
     };
 
+    const requestRemovePlayer = (playerId: string) => {
+        const message: IRequestRemovePlayerMessage = {
+            type: MESSAGE_TYPE.REQUEST_REMOVE_PLAYER,
+            scorePadId: scorePadData.scorePadId,
+            data: {
+                playerId,
+            },
+        };
+
+        webSocket.send(JSON.stringify(message));
+    };
+
     const requestUpdatePlayerScore = (
         updatedPlayerScore: IRequestUpdateScoreData
     ) => {
@@ -221,6 +235,7 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
         requestUpdatePlayerData,
         requestUpdatePlayerScore,
         attemptReconnect,
+        requestRemovePlayer,
     };
 
     return (

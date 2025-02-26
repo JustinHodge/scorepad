@@ -15,6 +15,7 @@ export const Scorepad = () => {
         requestLeaveExisting,
         requestUpdatePlayerData,
         requestUpdatePlayerScore,
+        requestRemovePlayer,
     } = useContext(ScorepadContext);
     const [updatePlayerData, setUpdatePlayerData] = useState<{
         [playerId: string]: IRequestUpdatePlayerData;
@@ -73,59 +74,89 @@ export const Scorepad = () => {
                 </h2>
                 <form onSubmit={(e) => e.preventDefault()}>
                     {Object.values(players).map((player) => (
-                        <div key={player.id} className='row my-2'>
-                            <input
-                                className='form-control col mx-1'
-                                type='text'
-                                value={
-                                    updatePlayerData[player.id ?? '']
-                                        ?.newName ?? player.name
-                                }
-                                onChange={(e) => {
-                                    if (!player.id) {
-                                        console.error('no player id');
-                                        return;
-                                    }
+                        <div key={player.id} className='my-2 card'>
+                            <div className='card-body'>
+                                <div className='row'>
+                                    <input
+                                        className='form-control col mx-1'
+                                        type='text'
+                                        value={
+                                            updatePlayerData[player.id ?? '']
+                                                ?.newName ?? player.name
+                                        }
+                                        onChange={(e) => {
+                                            if (!player.id) {
+                                                console.error('no player id');
+                                                return;
+                                            }
 
-                                    const updateData = {
-                                        playerId: player.id,
-                                        newName: e.target.value,
-                                    };
+                                            const updateData = {
+                                                playerId: player.id,
+                                                newName: e.target.value,
+                                            };
 
-                                    setUpdatePlayerData({
-                                        ...updatePlayerData,
-                                        [player.id]: updateData,
-                                    });
-                                }}
-                            ></input>
-                            <input
-                                className='form-control col mx-1'
-                                type='number'
-                                value={
-                                    updatePlayerScore[player.id ?? '']
-                                        ?.newScore ??
-                                    player.score ??
-                                    '0'
-                                }
-                                onChange={(e) => {
-                                    if (!player.id) {
-                                        console.error('no player id');
-                                        return;
-                                    }
+                                            setUpdatePlayerData({
+                                                ...updatePlayerData,
+                                                [player.id]: updateData,
+                                            });
+                                        }}
+                                    ></input>
+                                    <input
+                                        className='form-control col mx-1'
+                                        type='number'
+                                        value={
+                                            updatePlayerScore[player.id ?? '']
+                                                ?.newScore ??
+                                            player.score ??
+                                            '0'
+                                        }
+                                        onChange={(e) => {
+                                            if (!player.id) {
+                                                console.error('no player id');
+                                                return;
+                                            }
 
-                                    const newScore = buildScore(e.target.value);
+                                            const newScore = buildScore(
+                                                e.target.value
+                                            );
 
-                                    const updateData = {
-                                        playerId: player.id,
-                                        newScore: newScore,
-                                    };
+                                            const updateData = {
+                                                playerId: player.id,
+                                                newScore: newScore,
+                                            };
 
-                                    setUpdatePlayerScore({
-                                        ...updatePlayerScore,
-                                        [player.id]: updateData,
-                                    });
-                                }}
-                            ></input>
+                                            setUpdatePlayerScore({
+                                                ...updatePlayerScore,
+                                                [player.id]: updateData,
+                                            });
+                                        }}
+                                    ></input>
+                                </div>
+                            </div>
+                            <div className='card-footer'>
+                                <div className='btn-group'>
+                                    <button className='btn btn-primary'>
+                                        +1
+                                    </button>
+                                    <button className='btn btn-primary'>
+                                        +10
+                                    </button>
+                                    <button className='btn btn-primary'>
+                                        -1
+                                    </button>
+                                    <button className='btn btn-primary'>
+                                        -10
+                                    </button>
+                                </div>
+                                <button
+                                    onClick={() => {
+                                        requestRemovePlayer(player.id ?? '');
+                                    }}
+                                    className='btn btn-danger float-end'
+                                >
+                                    X
+                                </button>
+                            </div>
                         </div>
                     ))}
                     <div className='row my-1'>

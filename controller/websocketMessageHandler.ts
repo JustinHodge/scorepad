@@ -7,6 +7,8 @@ import {
     IRequestUpdateScoreData,
     IResponseMessage,
     ISystemMessage,
+    IRequestRemovePlayerMessage,
+    IRequestRemovePlayerData,
 } from '../types';
 import { ScorePads } from '../class/scorePads';
 import { ScorePad } from '../class/scorePad';
@@ -118,6 +120,15 @@ export const websocketMessageHandler = (
                 console.error(
                     'No playerId or newScore provided to update score'
                 );
+            }
+
+            return existingScorePad;
+        },
+        [MESSAGE_TYPE.REQUEST_REMOVE_PLAYER]: (): ScorePad => {
+            const { playerId } = requestData as IRequestRemovePlayerData;
+
+            if (playerId) {
+                existingScorePad.removePlayer(playerId);
             }
 
             return existingScorePad;
