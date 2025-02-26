@@ -134,4 +134,8 @@ export class ScorePad {
             })
         );
     };
+
+    public removePlayer = (playerId: string) => {
+        delete this.players[playerId];
+    };
 }

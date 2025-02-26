@@ -84,6 +84,15 @@ export interface IRequestLeaveExistingMessage extends IMessage {
     data: IRequestLeaveExistingData;
 }
 
+export interface IRequestRemovePlayerData {
+    playerId: string;
+}
+
+export interface IRequestRemovePlayerMessage extends IMessage {
+    type: typeof MESSAGE_TYPE.REQUEST_REMOVE_PLAYER;
+    data: IRequestRemovePlayerData;
+}
+
 export interface IResponseData {
     success: boolean;
     message?: string;
