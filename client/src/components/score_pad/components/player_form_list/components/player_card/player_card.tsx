@@ -11,7 +11,7 @@ interface IProps {
     player: IPlayer;
 }
 
-const INPUT_REQUEST_DELAY_MS = 50;
+const INPUT_REQUEST_DELAY_MS = 300;
 
 const buildScore = (score: string | number | undefined | null | typeof NaN) => {
     if (!score) {
