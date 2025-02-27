@@ -82,7 +82,7 @@ export class ScorePad {
     }: IRequestUpdatePlayerData) => {
         const player = this.getPlayer(playerId);
 
-        if (newName) {
+        if (newName !== undefined && newName !== null) {
             player.name = newName;
         }
 
@@ -91,13 +91,10 @@ export class ScorePad {
         }
     };
 
-    public updatePlayerScore = (
-        playerId: string,
-        newScore: number | null | undefined
-    ) => {
+    public updatePlayerScore = (playerId: string, newScore: number) => {
         const player = this.getPlayer(playerId);
 
-        player.score = newScore ?? player.score ?? 0;
+        player.score = newScore;
     };
 
     public sendBroadcastMessage = (message: IResponseMessage) => {

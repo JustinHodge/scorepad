@@ -11,19 +11,7 @@ interface IProps {
     player: IPlayer;
 }
 
-const INPUT_REQUEST_DELAY_MS = 300;
-
-const buildScore = (score: string | number | undefined | null | typeof NaN) => {
-    if (!score) {
-        return 0;
-    }
-
-    if (Number.isNaN(score)) {
-        return 0;
-    }
-
-    return Number.parseInt(score.toString());
-};
+const INPUT_REQUEST_DELAY_MS = 1000;
 
 export const PlayerCard = ({ player }: IProps) => {
     const { requestUpdatePlayerData, requestUpdatePlayerScore } =
@@ -34,40 +22,14 @@ export const PlayerCard = ({ player }: IProps) => {
     const [updatePlayerScore, setUpdatePlayerScore] =
         useState<IRequestUpdateScoreData | null>(null);
 
-    const queueUpdateScore = (score: string | number) => {
-        const newScore = buildScore(score);
-
-        if (!player.id) {
-            console.error('no player id');
-            return;
-        }
-
-        setUpdatePlayerScore({
-            playerId: player.id,
-            newScore: newScore,
-        });
-    };
-
-    const queueUpdateName = (name: string) => {
-        if (!player.id) {
-            console.error('no player id');
-            return;
-        }
-
-        setUpdatePlayerData({
-            playerId: player.id,
-            newName: name,
-        });
-    };
-
     useEffect(() => {
         const timeoutId = setTimeout(() => {
-            if (updatePlayerData) {
+            if (updatePlayerData !== null && updatePlayerData !== undefined) {
                 requestUpdatePlayerData(updatePlayerData);
                 setUpdatePlayerData(null);
             }
 
-            if (updatePlayerScore) {
+            if (updatePlayerScore !== null && updatePlayerScore !== undefined) {
                 requestUpdatePlayerScore(updatePlayerScore);
                 setUpdatePlayerScore(null);
             }
@@ -87,25 +49,37 @@ export const PlayerCard = ({ player }: IProps) => {
                     <input
                         className='form-control col mx-1'
                         type='text'
-                        value={updatePlayerData?.newName ?? player.name}
+                        value={player.name}
                         onChange={(e) => {
-                            queueUpdateName(e.target.value);
+                            requestUpdatePlayerData({
+                                playerId: player.id ?? '',
+                                newName: e.target.value,
+                            });
                         }}
                     ></input>
                     <input
                         className='form-control col mx-1'
                         type='number'
-                        value={
-                            updatePlayerScore?.newScore ?? player.score ?? '0'
-                        }
+                        value={player.score ?? ''}
                         onChange={(e) => {
-                            queueUpdateScore(e.target.value);
+                            requestUpdatePlayerScore({
+                                playerId: player.id ?? '',
+                                newScore: Number.parseInt(e.target.value),
+                            });
                         }}
                     ></input>
                 </div>
             </div>
             <PlayerCardFooter
-                scoreUpdateFunction={queueUpdateScore}
+                scoreUpdateFunction={(newScore) => {
+                    requestUpdatePlayerScore({
+                        playerId: player.id ?? '',
+                        newScore:
+                            typeof newScore === 'string'
+                                ? Number.parseInt(newScore)
+                                : newScore,
+                    });
+                }}
                 playerId={player.id}
                 currentScore={updatePlayerScore?.newScore ?? player.score ?? 0}
             />

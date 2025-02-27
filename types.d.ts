@@ -62,7 +62,7 @@ export interface IRequestUpdatePlayerMessage extends IMessage {
 
 export interface IRequestUpdateScoreData {
     playerId: string;
-    newScore: number | undefined | null;
+    newScore: number;
 }
 
 export interface IRequestUpdateScoreMessage extends IMessage {

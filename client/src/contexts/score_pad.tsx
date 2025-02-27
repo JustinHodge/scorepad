@@ -96,6 +96,8 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
                 return;
             }
 
+            console.log(newScorePadData);
+
             setScorePadData(newScorePadData);
 
             if (
@@ -200,6 +202,8 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
             scorePadId: scorePadData.scorePadId,
             data: updatedPlayerData,
         };
+
+        console.log(message);
 
         webSocket.send(JSON.stringify(message));
     };

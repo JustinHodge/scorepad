@@ -54,30 +54,12 @@ export const websocketMessageHandler = (
 
     const handlers = {
         [MESSAGE_TYPE.REQUEST_JOIN_EXISTING]: (): ScorePad | null => {
-            if (!existingScorePad) {
-                const response: IResponseMessage = {
-                    type: MESSAGE_TYPE.RESPONSE_MESSAGE,
-                    scorePadId: '',
-                    data: {
-                        success: true,
-                        request: {
-                            type: data.type,
-                        },
-                        scorePadData: { players: {}, scorePadId: '' },
-                    },
-                };
+            existingScorePad?.joinGame(sourceWebSocket);
 
-                sourceWebSocket.send(JSON.stringify(response));
-
-                return null;
-            }
-
-            existingScorePad.joinGame(sourceWebSocket);
-
-            return existingScorePad ?? { players: {}, scorePadId: '' };
+            return existingScorePad;
         },
         [MESSAGE_TYPE.REQUEST_LEAVE_EXISTING]: (): ScorePad => {
-            existingScorePad.leaveGame(sourceWebSocket);
+            existingScorePad?.leaveGame(sourceWebSocket);
             return existingScorePad;
         },
         [MESSAGE_TYPE.REQUEST_NEW_PAD]: (): ScorePad => {
@@ -95,7 +77,7 @@ export const websocketMessageHandler = (
             const { startScore } = requestData as IRequestAddPlayerData;
 
             if (startScore !== undefined) {
-                existingScorePad.addPlayer(startScore);
+                existingScorePad?.addPlayer(startScore);
             }
 
             return existingScorePad;
@@ -105,7 +87,7 @@ export const websocketMessageHandler = (
                 requestData as IRequestUpdatePlayerData;
 
             if (playerId) {
-                existingScorePad.updatePlayer({ playerId, newName, newColor });
+                existingScorePad?.updatePlayer({ playerId, newName, newColor });
             }
 
             return existingScorePad;
@@ -115,7 +97,7 @@ export const websocketMessageHandler = (
                 requestData as IRequestUpdateScoreData;
 
             if (playerId) {
-                existingScorePad.updatePlayerScore(playerId, newScore);
+                existingScorePad?.updatePlayerScore(playerId, newScore);
             } else {
                 console.error(
                     'No playerId or newScore provided to update score'
@@ -128,7 +110,7 @@ export const websocketMessageHandler = (
             const { playerId } = requestData as IRequestRemovePlayerData;
 
             if (playerId) {
-                existingScorePad.removePlayer(playerId);
+                existingScorePad?.removePlayer(playerId);
             }
 
             return existingScorePad;
@@ -139,6 +121,20 @@ export const websocketMessageHandler = (
         const scorePad = handlers[type]();
 
         if (!scorePad) {
+            const response: IResponseMessage = {
+                type: MESSAGE_TYPE.RESPONSE_MESSAGE,
+                scorePadId: '',
+                data: {
+                    success: true,
+                    request: {
+                        type: data.type,
+                    },
+                    scorePadData: { players: {}, scorePadId: '' },
+                },
+            };
+
+            sourceWebSocket.send(JSON.stringify(response));
+
             return;
         }
 
