@@ -4,7 +4,7 @@ import ScorepadContext from '../../../../contexts/score_pad';
 
 const DEFAULT_NUM_PLAYERS = 1;
 export const StartNew = () => {
-    const { startNewScorePad } = useContext(ScorepadContext);
+    const { requestStartNewScorePad } = useContext(ScorepadContext);
     const [numberOfPlayers, setNumberOfPlayers] =
         useState<number>(DEFAULT_NUM_PLAYERS);
     const [startingScore, setStartingScore] = useState<number>(0);
@@ -12,17 +12,18 @@ export const StartNew = () => {
     const playerNumberChangeHandler: ChangeEventHandler<HTMLInputElement> = (
         e
     ) => {
-        const newValue = Number.parseInt(e.target.value);
+        setNumberOfPlayers(Number.parseInt(e.target.value));
+        // const newValue = Number.parseInt(e.target.value);
 
-        newValue
-            ? setNumberOfPlayers(newValue)
-            : () => {
-                  console.log(
-                      'invalid number of players set. resetting to default'
-                  );
+        // newValue
+        //     ? setNumberOfPlayers(newValue)
+        //     : () => {
+        //           console.log(
+        //               'invalid number of players set. resetting to default'
+        //           );
 
-                  setNumberOfPlayers(DEFAULT_NUM_PLAYERS);
-              };
+        //           setNumberOfPlayers(DEFAULT_NUM_PLAYERS);
+        //       };
     };
 
     const startingScoreChangeHandler: ChangeEventHandler<HTMLInputElement> = (
@@ -57,7 +58,10 @@ export const StartNew = () => {
                         className='btn btn-primary'
                         type='button'
                         onClick={() => {
-                            startNewScorePad(numberOfPlayers, startingScore);
+                            requestStartNewScorePad(
+                                numberOfPlayers,
+                                startingScore
+                            );
                         }}
                     >
                         Start New Score Pad

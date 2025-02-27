@@ -18,8 +18,11 @@ import { MESSAGE_TYPE } from '../../../globalConstants';
 interface IScorePadContext {
     isConnected: boolean;
     scorePadData: IScorePadData;
-    startNewScorePad: (numberOfPlayers: number, startScore: number) => void;
-    addPlayer: (startScore: number) => void;
+    requestStartNewScorePad: (
+        numberOfPlayers: number,
+        startScore: number
+    ) => void;
+    requestAddPlayer: (startScore: number) => void;
     requestJoinExisting: (scorePadId: string) => void;
     requestLeaveExisting: () => void;
     requestUpdatePlayerData: (requestData: IRequestUpdatePlayerData) => void;
@@ -136,7 +139,7 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const webSocket = useMemo(connectToServer, [connectCount]);
 
-    const startNewScorePad = async (
+    const requestStartNewScorePad = async (
         numberOfPlayers: number,
         startScore: number
     ) => {
@@ -144,7 +147,7 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
             type: MESSAGE_TYPE.REQUEST_NEW_PAD,
             scorePadId: scorePadData.scorePadId,
             data: {
-                numberOfPlayers,
+                numberOfPlayers: numberOfPlayers ?? 0,
                 startScore,
             },
         };
@@ -228,8 +231,8 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
     const value = {
         isConnected,
         scorePadData,
-        startNewScorePad,
-        addPlayer: requestAddPlayer,
+        requestStartNewScorePad,
+        requestAddPlayer,
         requestJoinExisting,
         requestLeaveExisting,
         requestUpdatePlayerData,

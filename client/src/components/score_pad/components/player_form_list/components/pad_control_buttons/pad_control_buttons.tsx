@@ -2,7 +2,8 @@ import { useContext } from 'react';
 import ScorepadContext from '../../../../../../contexts/score_pad';
 
 export const PadControlButtons = () => {
-    const { addPlayer, requestLeaveExisting } = useContext(ScorepadContext);
+    const { requestAddPlayer, requestLeaveExisting } =
+        useContext(ScorepadContext);
     return (
         <>
             <div className='row my-1'>
@@ -10,7 +11,7 @@ export const PadControlButtons = () => {
                     className='btn btn-primary input-group-text'
                     type='button'
                     onClick={() => {
-                        addPlayer(0);
+                        requestAddPlayer(0);
                     }}
                 >
                     Add Player
