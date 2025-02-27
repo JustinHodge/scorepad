@@ -32,26 +32,11 @@ const websocketMessageHandler = (data, scorePads, sourceWebSocket) => {
     const existingScorePad = scorePads.getScorePad(scorePadId);
     const handlers = {
         [globalConstants_1.MESSAGE_TYPE.REQUEST_JOIN_EXISTING]: () => {
-            if (!existingScorePad) {
-                const response = {
-                    type: globalConstants_1.MESSAGE_TYPE.RESPONSE_MESSAGE,
-                    scorePadId: '',
-                    data: {
-                        success: true,
-                        request: {
-                            type: data.type,
-                        },
-                        scorePadData: { players: {}, scorePadId: '' },
-                    },
-                };
-                sourceWebSocket.send(JSON.stringify(response));
-                return null;
-            }
-            existingScorePad.joinGame(sourceWebSocket);
-            return existingScorePad !== null && existingScorePad !== void 0 ? existingScorePad : { players: {}, scorePadId: '' };
+            existingScorePad === null || existingScorePad === void 0 ? void 0 : existingScorePad.joinGame(sourceWebSocket);
+            return existingScorePad;
         },
         [globalConstants_1.MESSAGE_TYPE.REQUEST_LEAVE_EXISTING]: () => {
-            existingScorePad.leaveGame(sourceWebSocket);
+            existingScorePad === null || existingScorePad === void 0 ? void 0 : existingScorePad.leaveGame(sourceWebSocket);
             return existingScorePad;
         },
         [globalConstants_1.MESSAGE_TYPE.REQUEST_NEW_PAD]: () => {
@@ -62,21 +47,21 @@ const websocketMessageHandler = (data, scorePads, sourceWebSocket) => {
         [globalConstants_1.MESSAGE_TYPE.REQUEST_ADD_PLAYER]: () => {
             const { startScore } = requestData;
             if (startScore !== undefined) {
-                existingScorePad.addPlayer(startScore);
+                existingScorePad === null || existingScorePad === void 0 ? void 0 : existingScorePad.addPlayer(startScore);
             }
             return existingScorePad;
         },
         [globalConstants_1.MESSAGE_TYPE.REQUEST_UPDATE_PLAYER]: () => {
             const { playerId, newName, newColor } = requestData;
             if (playerId) {
-                existingScorePad.updatePlayer({ playerId, newName, newColor });
+                existingScorePad === null || existingScorePad === void 0 ? void 0 : existingScorePad.updatePlayer({ playerId, newName, newColor });
             }
             return existingScorePad;
         },
         [globalConstants_1.MESSAGE_TYPE.REQUEST_UPDATE_SCORE]: () => {
             const { playerId, newScore } = requestData;
             if (playerId) {
-                existingScorePad.updatePlayerScore(playerId, newScore);
+                existingScorePad === null || existingScorePad === void 0 ? void 0 : existingScorePad.updatePlayerScore(playerId, newScore);
             }
             else {
                 console.error('No playerId or newScore provided to update score');
@@ -86,7 +71,7 @@ const websocketMessageHandler = (data, scorePads, sourceWebSocket) => {
         [globalConstants_1.MESSAGE_TYPE.REQUEST_REMOVE_PLAYER]: () => {
             const { playerId } = requestData;
             if (playerId) {
-                existingScorePad.removePlayer(playerId);
+                existingScorePad === null || existingScorePad === void 0 ? void 0 : existingScorePad.removePlayer(playerId);
             }
             return existingScorePad;
         },
@@ -94,6 +79,18 @@ const websocketMessageHandler = (data, scorePads, sourceWebSocket) => {
     if (handlers[type]) {
         const scorePad = handlers[type]();
         if (!scorePad) {
+            const response = {
+                type: globalConstants_1.MESSAGE_TYPE.RESPONSE_MESSAGE,
+                scorePadId: '',
+                data: {
+                    success: true,
+                    request: {
+                        type: data.type,
+                    },
+                    scorePadData: { players: {}, scorePadId: '' },
+                },
+            };
+            sourceWebSocket.send(JSON.stringify(response));
             return;
         }
         response.data.success = true;
