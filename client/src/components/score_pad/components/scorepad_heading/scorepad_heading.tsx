@@ -7,7 +7,7 @@ export const ScorepadHeading = () => {
     const { requestAddPlayer, requestLeaveExisting } =
         useContext(ScorepadContext);
     return (
-        <Navbar>
+        <Navbar sticky='top'>
             <Container>
                 <Navbar.Brand>
                     <Image
@@ -23,8 +23,8 @@ export const ScorepadHeading = () => {
                     />
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls='basic-navbar-nav' />
-                <Navbar.Collapse>
-                    <NavbarText>
+                <Navbar.Collapse className='justify-content-end'>
+                    <NavbarText className='px-2'>
                         <Button
                             onClick={() => {
                                 requestAddPlayer(0);
@@ -36,8 +36,9 @@ export const ScorepadHeading = () => {
                             />
                         </Button>
                     </NavbarText>
-                    <NavbarText>
+                    <NavbarText className='px-2'>
                         <Button
+                            variant='danger'
                             onClick={() => {
                                 requestLeaveExisting();
                             }}
