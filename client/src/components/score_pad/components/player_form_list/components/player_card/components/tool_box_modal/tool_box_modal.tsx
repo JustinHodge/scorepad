@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Modal, Button, Image, Nav, Tab, Row } from 'react-bootstrap';
+import { CalculatorTab } from './components/calculator_tab/calculator_tab';
+import DiceTab from './components/dice_tab/dice_tab';
 
 const TAB_KEYS = { CALCULATOR: 'calculator ', DICE: 'dice' } as const;
 const DEFAULT_TAB = TAB_KEYS.CALCULATOR;
@@ -21,26 +23,25 @@ export const ToolBoxModal = () => {
                     <Tab.Container
                         activeKey={currentTab}
                         onSelect={(key) => {
-                            const newTabKey = key as keyof typeof TAB_KEYS;
-                            console.log(newTabKey);
-                            console.log(TAB_KEYS[newTabKey]);
-                            setCurrentTab(
-                                TAB_KEYS[
-                                    (key as keyof typeof TAB_KEYS) ?? ''
-                                ] ?? TAB_KEYS.CALCULATOR
-                            );
+                            setCurrentTab(key ?? TAB_KEYS.CALCULATOR);
                         }}
                     >
                         <Row>
                             <Nav variant='tabs'>
                                 <Nav.Item>
                                     <Nav.Link eventKey={TAB_KEYS.CALCULATOR}>
-                                        Calculator
+                                        <Image
+                                            className='button-icon'
+                                            src='/calculator.svg'
+                                        />
                                     </Nav.Link>
                                 </Nav.Item>
                                 <Nav.Item>
                                     <Nav.Link eventKey={TAB_KEYS.DICE}>
-                                        Dice
+                                        <Image
+                                            className='button-icon'
+                                            src='/dice.svg'
+                                        />
                                     </Nav.Link>
                                 </Nav.Item>
                             </Nav>
@@ -48,10 +49,10 @@ export const ToolBoxModal = () => {
                         <Row>
                             <Tab.Content>
                                 <Tab.Pane eventKey={TAB_KEYS.CALCULATOR}>
-                                    Tab content for Calculator
+                                    <CalculatorTab />
                                 </Tab.Pane>
                                 <Tab.Pane eventKey={TAB_KEYS.DICE}>
-                                    Tab content for Dice
+                                    <DiceTab />
                                 </Tab.Pane>
                             </Tab.Content>
                         </Row>
