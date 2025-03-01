@@ -13,17 +13,6 @@ export const StartNew = () => {
         e
     ) => {
         setNumberOfPlayers(Number.parseInt(e.target.value));
-        // const newValue = Number.parseInt(e.target.value);
-
-        // newValue
-        //     ? setNumberOfPlayers(newValue)
-        //     : () => {
-        //           console.log(
-        //               'invalid number of players set. resetting to default'
-        //           );
-
-        //           setNumberOfPlayers(DEFAULT_NUM_PLAYERS);
-        //       };
     };
 
     const startingScoreChangeHandler: ChangeEventHandler<HTMLInputElement> = (

@@ -37,6 +37,7 @@ export const PlayerCardFooter = ({
                 {scoreUpdateButtons.map((button) => {
                     return (
                         <button
+                            key={button.label}
                             onClick={() => {
                                 scoreUpdateFunction(
                                     currentScore + button.value

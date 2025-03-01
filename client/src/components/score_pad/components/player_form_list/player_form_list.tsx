@@ -12,7 +12,7 @@ export const PlayerFormList = () => {
     return (
         <form onSubmit={(e) => e.preventDefault()}>
             {Object.values(players).map((player) => (
-                <PlayerCard player={player} />
+                <PlayerCard key={player.id} player={player} />
             ))}
             <PadControlButtons />
         </form>
