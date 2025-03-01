@@ -13,9 +13,9 @@ import {
     CloseButton,
     Col,
     Form,
-    Image,
     Row,
 } from 'react-bootstrap';
+import ToolBoxModal from './components/tool_box_modal/tool_box_modal';
 
 interface IProps {
     player: IPlayer;
@@ -118,12 +118,7 @@ export const PlayerCard = ({ player }: IProps) => {
                         ></Form.Control>
                     </Col>
                     <Col xs={3}>
-                        <Button variant='secondary'>
-                            <Image
-                                className='button-icon'
-                                src='/tool_box.svg'
-                            />
-                        </Button>
+                        <ToolBoxModal />
                     </Col>
                 </Row>
                 <Row className='py-1'>
