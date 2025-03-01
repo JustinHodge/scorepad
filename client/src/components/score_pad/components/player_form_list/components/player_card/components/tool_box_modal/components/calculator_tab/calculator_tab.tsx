@@ -10,6 +10,7 @@ const PLUS_SIGN = '+';
 const MINUS_SIGN = '-';
 const EQUALS_SIGN = '=';
 const DECIMAL_SEPARATOR = '.';
+const MAX_DIGIT_DISPLAY = 16;
 
 type IOperationFunction = (left: string, right: string) => string;
 
@@ -21,19 +22,6 @@ interface IEquation {
     left: string;
     right: string | null;
 }
-
-// interface IEquation {
-//     operator: {
-//         label: string;
-//         operationFunction: IOperationFunction;
-//     } | null;
-//     left: number;
-//     leftDecimal?: number;
-//     leftDecimalDigits?: number;
-//     right: number | null;
-//     rightDecimal?: number;
-//     rightDecimalDigits?: number;
-// }
 
 interface IEquationTransformer {
     (arg0: IEquation): IEquation;
@@ -217,7 +205,7 @@ const CALCULATOR_BUTTONS: ICalculatorButton[] = [
     },
     {
         label: DECIMAL_SEPARATOR,
-        equationTransformer: buildNumberButtonTransformer('.'),
+        equationTransformer: buildNumberButtonTransformer(DECIMAL_SEPARATOR),
     },
     {
         label: '0',
@@ -242,17 +230,49 @@ export const CalculatorTab = () => {
     const [currentEquation, setCurrentEquation] =
         useState<IEquation>(BLANK_EQUATION);
 
+    const renderFriendlyNumber = (numberString: string): string => {
+        const parsedNumber = Number(numberString);
+        const parsedNumberString = parsedNumber.toString();
+
+        if (parsedNumberString.length > MAX_DIGIT_DISPLAY) {
+            const [wholeNumberPart, decimalNumberPart] =
+                parsedNumberString.split('.');
+
+            if (wholeNumberPart.length > MAX_DIGIT_DISPLAY) {
+                const firstDigit = wholeNumberPart.slice(0, 1);
+                const exponent = (wholeNumberPart.length - 1).toString();
+                const decimalDigits = wholeNumberPart.slice(
+                    1,
+                    MAX_DIGIT_DISPLAY - exponent.length - 2
+                );
+
+                return `${firstDigit}.${decimalDigits}e${exponent}`;
+            }
+
+            if (parsedNumberString.length > MAX_DIGIT_DISPLAY) {
+                return `${wholeNumberPart}.${decimalNumberPart.slice(
+                    0,
+                    MAX_DIGIT_DISPLAY - 4 - wholeNumberPart.length
+                )}...`;
+            }
+        } else {
+            return parsedNumberString;
+        }
+
+        return 'Error';
+    };
+
     return (
         <Card border='light' className='p-4 m-4 shadow-lg'>
             <Container>
                 <Row className='mb-4'>
                     <Form.Control
                         disabled
-                        value={
+                        value={renderFriendlyNumber(
                             currentEquation.right !== null
-                                ? Number(currentEquation.right)
-                                : Number(currentEquation.left)
-                        }
+                                ? currentEquation.right
+                                : currentEquation.left
+                        )}
                         className='bg-light text-end text-dark'
                         type='text'
                     />
