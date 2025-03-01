@@ -9,17 +9,31 @@ const DELETE_SYMBOL = '\u232b';
 const PLUS_SIGN = '+';
 const MINUS_SIGN = '-';
 const EQUALS_SIGN = '=';
+const DECIMAL_SEPARATOR = '.';
 
-type IOperationFunction = (left: number, right: number) => number;
+type IOperationFunction = (left: string, right: string) => string;
 
 interface IEquation {
     operator: {
         label: string;
         operationFunction: IOperationFunction;
     } | null;
-    left: number;
-    right: number | null;
+    left: string;
+    right: string | null;
 }
+
+// interface IEquation {
+//     operator: {
+//         label: string;
+//         operationFunction: IOperationFunction;
+//     } | null;
+//     left: number;
+//     leftDecimal?: number;
+//     leftDecimalDigits?: number;
+//     right: number | null;
+//     rightDecimal?: number;
+//     rightDecimalDigits?: number;
+// }
 
 interface IEquationTransformer {
     (arg0: IEquation): IEquation;
@@ -31,12 +45,12 @@ interface ICalculatorButton {
 }
 
 const BLANK_EQUATION: IEquation = {
-    left: 0,
+    left: '0',
     operator: null,
     right: null,
 };
 
-const buildNumberButtonTransformer = (value: number): IEquationTransformer => {
+const buildNumberButtonTransformer = (value: string): IEquationTransformer => {
     return ({ left, operator, right }) => {
         const newEquation = {
             left: left,
@@ -45,9 +59,9 @@ const buildNumberButtonTransformer = (value: number): IEquationTransformer => {
         };
 
         if (right !== null) {
-            newEquation.right = right * 10 + value;
+            newEquation.right = `${right}${value}`;
         } else {
-            newEquation.left = left * 10 + value;
+            newEquation.left = `${left}${value}`;
         }
 
         return newEquation;
@@ -71,7 +85,7 @@ const buildOperatorButtonTransformer =
             operationFunction: operationFunction,
         };
 
-        newEquation.right = 0;
+        newEquation.right = '0';
 
         return newEquation;
     };
@@ -82,7 +96,7 @@ const solveEquation = ({ right, left, operator }: IEquation): IEquation => {
     }
 
     return {
-        left: operator.operationFunction(left, right),
+        left: operator.operationFunction(left, right).toString(),
         operator: null,
         right: null,
     };
@@ -111,7 +125,8 @@ const CALCULATOR_BUTTONS: ICalculatorButton[] = [
                 right: right,
             };
 
-            const deleteLastDigit = (number: number) => Math.floor(number / 10);
+            const deleteLastDigit = (numberString: string) =>
+                Math.floor(Number(numberString) / 10).toString();
 
             if (right !== null) {
                 newEquation.right = deleteLastDigit(right);
@@ -131,7 +146,8 @@ const CALCULATOR_BUTTONS: ICalculatorButton[] = [
                 right: right,
             };
 
-            const invertNumber = (number: number) => number * -1;
+            const invertNumber = (numberString: string) =>
+                (Number(numberString) * -1).toString();
 
             if (right !== null) {
                 newEquation.right = invertNumber(right);
@@ -144,71 +160,68 @@ const CALCULATOR_BUTTONS: ICalculatorButton[] = [
     },
     {
         label: '1',
-        equationTransformer: buildNumberButtonTransformer(1),
+        equationTransformer: buildNumberButtonTransformer('1'),
     },
     {
         label: '2',
-        equationTransformer: buildNumberButtonTransformer(2),
+        equationTransformer: buildNumberButtonTransformer('2'),
     },
     {
         label: '3',
-        equationTransformer: buildNumberButtonTransformer(3),
+        equationTransformer: buildNumberButtonTransformer('3'),
     },
     {
         label: PLUS_SIGN,
         equationTransformer: buildOperatorButtonTransformer(
-            (left, right) => left + right,
+            (left, right) => (Number(left) + Number(right)).toString(),
             PLUS_SIGN
         ),
     },
     {
         label: '4',
-        equationTransformer: buildNumberButtonTransformer(4),
+        equationTransformer: buildNumberButtonTransformer('4'),
     },
     {
         label: '5',
-        equationTransformer: buildNumberButtonTransformer(5),
+        equationTransformer: buildNumberButtonTransformer('5'),
     },
     {
         label: '6',
-        equationTransformer: buildNumberButtonTransformer(6),
+        equationTransformer: buildNumberButtonTransformer('6'),
     },
     {
         label: MINUS_SIGN,
         equationTransformer: buildOperatorButtonTransformer(
-            (left, right) => left - right,
+            (left, right) => (Number(left) - Number(right)).toString(),
             MINUS_SIGN
         ),
     },
     {
         label: '7',
-        equationTransformer: buildNumberButtonTransformer(7),
+        equationTransformer: buildNumberButtonTransformer('7'),
     },
     {
         label: '8',
-        equationTransformer: buildNumberButtonTransformer(8),
+        equationTransformer: buildNumberButtonTransformer('8'),
     },
     {
         label: '9',
-        equationTransformer: buildNumberButtonTransformer(9),
+        equationTransformer: buildNumberButtonTransformer('9'),
     },
     {
         label: MULTIPLICATION_SIGN,
         equationTransformer: buildOperatorButtonTransformer(
-            (left, right) => left * right,
+            (left, right) => (Number(left) * Number(right)).toString(),
             MULTIPLICATION_SIGN
         ),
     },
     {
-        label: '.',
-        equationTransformer: (currentEquation) => {
-            const newEquation = { left: 0, operator: null, right: null };
-            return newEquation;
-        },
+        label: DECIMAL_SEPARATOR,
+        equationTransformer: buildNumberButtonTransformer('.'),
     },
     {
         label: '0',
-        equationTransformer: buildNumberButtonTransformer(0),
+        equationTransformer: buildNumberButtonTransformer('0'),
     },
     {
         label: EQUALS_SIGN,
@@ -217,7 +230,7 @@ const CALCULATOR_BUTTONS: ICalculatorButton[] = [
     {
         label: DIVISION_SIGN,
         equationTransformer: buildOperatorButtonTransformer(
-            (left, right) => left / right,
+            (left, right) => (Number(left) / Number(right)).toString(),
             DIVISION_SIGN
         ),
     },
@@ -237,8 +250,8 @@ export const CalculatorTab = () => {
                         disabled
                         value={
                             currentEquation.right !== null
-                                ? currentEquation.right
-                                : currentEquation.left
+                                ? Number(currentEquation.right)
+                                : Number(currentEquation.left)
                         }
                         className='bg-light text-end text-dark'
                         type='text'
