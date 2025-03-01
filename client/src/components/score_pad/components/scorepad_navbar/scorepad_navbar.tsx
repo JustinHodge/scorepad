@@ -29,10 +29,7 @@ export const ScorepadNavbar = () => {
                             requestAddPlayer(0);
                         }}
                     >
-                        <Image
-                            className='header-image-small'
-                            src='/add_profile.svg'
-                        />
+                        <Image className='button-icon' src='/add_profile.svg' />
                     </Button>
                 </NavbarText>
                 <NavbarText className='px-2'>
@@ -43,7 +40,7 @@ export const ScorepadNavbar = () => {
                         }}
                     >
                         <Image
-                            className='header-image-small'
+                            className='button-icon'
                             src='/session_leave.svg'
                         />
                     </Button>
