@@ -14,7 +14,7 @@ export const PlayerFormList = () => {
             {Object.values(players).map((player) => (
                 <PlayerCard key={player.id} player={player} />
             ))}
-            <PadControlButtons />
+            {/* <PadControlButtons /> */}
         </form>
     );
 };
