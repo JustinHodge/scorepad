@@ -1,5 +1,4 @@
 import { useContext, useState } from 'react';
-import './join_existing.css';
 import ScorepadContext from '../../../../contexts/score_pad';
 
 export const JoinExisting = () => {

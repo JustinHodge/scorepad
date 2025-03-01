@@ -18,3 +18,5 @@ export const PlayerFormList = () => {
         </form>
     );
 };
+
+export default PlayerFormList;

@@ -1,13 +1,16 @@
-import ShareableHeader from './components/shareable_header/shareable_header';
-import { PlayerFormList } from './components/player_form_list/player_form_list';
+import { Container } from 'react-bootstrap';
+import PlayerFormList from './components/player_form_list/player_form_list';
+import ScorepadHeading from './components/scorepad_heading/scorepad_heading';
 
 export const Scorepad = () => {
     return (
-        <div className='container'>
-            <div className='row'>
-                <ShareableHeader />
-                <PlayerFormList />
+        <Container>
+            <ScorepadHeading />
+            <div className='container'>
+                <div className='row'>
+                    <PlayerFormList />
+                </div>
             </div>
-        </div>
+        </Container>
     );
 };

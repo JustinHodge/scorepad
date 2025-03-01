@@ -1,5 +1,4 @@
 import { ChangeEventHandler, useContext, useState } from 'react';
-import './start_new.css';
 import ScorepadContext from '../../../../contexts/score_pad';
 
 const DEFAULT_NUM_PLAYERS = 1;
