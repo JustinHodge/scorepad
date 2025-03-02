@@ -22,7 +22,7 @@ export const ScorepadNavbar = () => {
                 />
             </Navbar.Brand>
             <Navbar.Toggle aria-controls='basic-navbar-nav' />
-            <Navbar.Collapse className='justify-content-end'>
+            <Navbar.Collapse role='navigation' className='justify-content-end'>
                 <NavbarText className='px-2'>
                     <Button
                         onClick={() => {

@@ -1,17 +1,17 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import { createElement, StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
 import App from './App';
 import './main.css';
 import { ScorePadProvider } from './contexts/score_pad';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-    React.createElement(() => {
+createRoot(document.getElementById('root')!).render(
+    createElement(() => {
         return (
-            <React.StrictMode>
+            <StrictMode>
                 <ScorePadProvider>
                     <App />
                 </ScorePadProvider>
-            </React.StrictMode>
+            </StrictMode>
         );
     })
 );

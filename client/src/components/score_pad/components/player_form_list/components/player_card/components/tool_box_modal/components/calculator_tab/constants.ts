@@ -216,4 +216,4 @@ export const CALCULATOR_BUTTONS: ICalculatorButton[] = [
             DIVISION_SIGN
         ),
     },
-] as const;
+];
