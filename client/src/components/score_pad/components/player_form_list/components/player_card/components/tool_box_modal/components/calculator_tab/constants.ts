@@ -63,7 +63,11 @@ const buildOperatorButtonTransformer =
         return newEquation;
     };
 
-const solveEquation = ({ right, left, operator }: IEquation): IEquation => {
+export const solveEquation = ({
+    right,
+    left,
+    operator,
+}: IEquation): IEquation => {
     if (right === null || operator === null) {
         return { left: left, operator: operator, right: right };
     }
@@ -84,8 +88,13 @@ export const CALCULATOR_BUTTONS: ICalculatorButton[] = [
     },
     {
         label: 'C',
-        equationTransformer: ({ left }) => {
+        equationTransformer: ({ left, operator }) => {
             const newEquation = { left: left, operator: null, right: null };
+
+            if (!operator) {
+                newEquation.left = '';
+            }
+
             return newEquation;
         },
     },
@@ -99,7 +108,7 @@ export const CALCULATOR_BUTTONS: ICalculatorButton[] = [
             };
 
             const deleteLastDigit = (numberString: string) =>
-                Math.floor(Number(numberString) / 10).toString();
+                numberString.slice(0, numberString.length - 1);
 
             if (right !== null) {
                 newEquation.right = deleteLastDigit(right);
