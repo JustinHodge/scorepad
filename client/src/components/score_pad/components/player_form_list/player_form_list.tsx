@@ -1,7 +1,6 @@
 import { useContext } from 'react';
 import ScorepadContext from '../../../../contexts/score_pad';
 
-import PadControlButtons from './components/pad_control_buttons/pad_control_buttons';
 import PlayerCard from './components/player_card/player_card';
 
 export const PlayerFormList = () => {
@@ -12,9 +11,10 @@ export const PlayerFormList = () => {
     return (
         <form onSubmit={(e) => e.preventDefault()}>
             {Object.values(players).map((player) => (
-                <PlayerCard player={player} />
+                <PlayerCard key={player.id} player={player} />
             ))}
-            <PadControlButtons />
         </form>
     );
 };
+
+export default PlayerFormList;

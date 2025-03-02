@@ -96,8 +96,6 @@ export const ScorePadProvider = ({ children }: React.PropsWithChildren) => {
                 return;
             }
 
-            console.log(newScorePadData);
-
             setScorePadData(newScorePadData);
 
             if (

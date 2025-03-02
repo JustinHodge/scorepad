@@ -1,4 +1,3 @@
-import './App.css';
 import { Scorepad } from './components/score_pad/score_pad';
 import NewScorepad from './components/new_score_pad/new_score_pad';
 import { useContext } from 'react';
