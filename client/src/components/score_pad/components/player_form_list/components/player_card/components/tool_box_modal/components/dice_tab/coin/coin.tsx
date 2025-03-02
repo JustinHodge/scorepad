@@ -15,13 +15,13 @@ export const Coin = () => {
             coinImage.animate(
                 [
                     {
-                        transform: 'rotateY(0deg)',
+                        transform: 'rotateX(0deg)',
                         easing: 'ease-in',
-                        paddingLeft: '0px',
+                        paddingBottom: '0px',
                     },
                     {
-                        transform: 'rotateY(90deg)',
-                        paddingLeft: '50px',
+                        transform: 'rotateX(90deg)',
+                        paddingBottom: '50px',
                     },
                 ],
                 {
@@ -33,14 +33,13 @@ export const Coin = () => {
                 coinImage.animate(
                     [
                         {
-                            transform: 'rotateY(90deg)',
-
-                            paddingRight: '50px',
+                            transform: 'rotateX(90deg)',
+                            paddingTop: '50px',
                         },
                         {
-                            transform: 'rotateY(0deg)',
+                            transform: 'rotateX(0deg)',
                             easing: 'ease-out',
-                            paddingRight: '0px',
+                            paddingTop: '0px',
                         },
                     ],
                     {
