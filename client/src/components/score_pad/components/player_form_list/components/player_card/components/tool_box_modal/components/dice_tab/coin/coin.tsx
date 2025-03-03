@@ -6,8 +6,10 @@ const COIN_FLIP_TIME_MS = 700;
 
 export const Coin = () => {
     const [coinSrcIndex, setCoinSrcIndex] = useState(0);
+    const [isFlipping, setIsFlipping] = useState(false);
 
     const flipCoin = (e: React.MouseEvent) => {
+        setIsFlipping(true);
         e.preventDefault();
         const numberOfFlips = Math.floor(Math.random() * 6) + 5;
         const interval = setInterval(() => {
@@ -51,16 +53,18 @@ export const Coin = () => {
         }, COIN_FLIP_TIME_MS);
         setTimeout(() => {
             clearInterval(interval);
-            console.log(numberOfFlips);
+            setIsFlipping(false);
         }, COIN_FLIP_TIME_MS * numberOfFlips);
     };
 
     return (
-        <Image
-            src={coinSources[coinSrcIndex]}
-            className={`coin`}
-            onClick={flipCoin}
-        />
+        <div className={`p-3 ${isFlipping ? 'pulse' : ''}`}>
+            <Image
+                src={coinSources[coinSrcIndex]}
+                className={`coin`}
+                onClick={flipCoin}
+            />
+        </div>
     );
 };
 
