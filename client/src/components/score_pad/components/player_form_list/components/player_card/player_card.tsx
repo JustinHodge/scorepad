@@ -75,77 +75,82 @@ export const PlayerCard = ({ player }: IProps) => {
     }
 
     return (
-        <Card key={player.id} className='my-2'>
-            <Card.Header className='d-flex justify-content-between'>
-                <Row>
-                    <Col>
-                        <Form.Control
-                            type='text'
-                            className='border-0 bg-transparent'
-                            value={player.name}
-                            onChange={(e) => {
-                                requestUpdatePlayerData({
-                                    playerId: player.id ?? '',
-                                    newName: e.target.value,
-                                });
-                            }}
-                        ></Form.Control>
-                    </Col>
-                    <Col xs={2}>
-                        <CloseButton
-                            // TODO: add warning before player deletion
-                            variant='danger'
-                            onClick={() => {
-                                requestRemovePlayer(player.id ?? '');
-                            }}
-                        />
-                    </Col>
-                </Row>
-            </Card.Header>
-            <CardBody>
-                <Row className='py-1'>
-                    <Col>
-                        <Form.Control
-                            type='text'
-                            className='border-0 bg-transparent'
-                            value={player.score ?? ''}
-                            onChange={(e) => {
-                                requestUpdatePlayerScore({
-                                    playerId: player.id ?? '',
-                                    newScore: Number.parseInt(e.target.value),
-                                });
-                            }}
-                        ></Form.Control>
-                    </Col>
-                    <Col xs={3}>
-                        <ToolBoxModal />
-                    </Col>
-                </Row>
-                <Row className='py-1'>
-                    <ButtonGroup>
-                        {SCORE_UPDATE_BUTTONS.map((button) => {
-                            return (
-                                <Button
-                                    variant='secondary'
-                                    key={button.label}
-                                    onClick={() => {
-                                        const newScore =
-                                            (player.score ?? 0) + button.value;
+        <Col xs={12} md={6} lg={4}>
+            <Card key={player.id} className='m-2'>
+                <Card.Header className='d-flex justify-content-between'>
+                    <Row>
+                        <Col>
+                            <Form.Control
+                                type='text'
+                                className='border-0 bg-transparent'
+                                value={player.name}
+                                onChange={(e) => {
+                                    requestUpdatePlayerData({
+                                        playerId: player.id ?? '',
+                                        newName: e.target.value,
+                                    });
+                                }}
+                            ></Form.Control>
+                        </Col>
+                        <Col xs={2}>
+                            <CloseButton
+                                // TODO: add warning before player deletion
+                                variant='danger'
+                                onClick={() => {
+                                    requestRemovePlayer(player.id ?? '');
+                                }}
+                            />
+                        </Col>
+                    </Row>
+                </Card.Header>
+                <CardBody>
+                    <Row className='py-1'>
+                        <Col>
+                            <Form.Control
+                                type='text'
+                                className='border-0 bg-transparent'
+                                value={player.score ?? ''}
+                                onChange={(e) => {
+                                    requestUpdatePlayerScore({
+                                        playerId: player.id ?? '',
+                                        newScore: Number.parseInt(
+                                            e.target.value
+                                        ),
+                                    });
+                                }}
+                            ></Form.Control>
+                        </Col>
+                        <Col xs={3}>
+                            <ToolBoxModal />
+                        </Col>
+                    </Row>
+                    <Row className='py-1'>
+                        <ButtonGroup>
+                            {SCORE_UPDATE_BUTTONS.map((button) => {
+                                return (
+                                    <Button
+                                        variant='secondary'
+                                        key={button.label}
+                                        onClick={() => {
+                                            const newScore =
+                                                (player.score ?? 0) +
+                                                button.value;
 
-                                        requestUpdatePlayerScore({
-                                            playerId: player.id ?? '',
-                                            newScore: newScore,
-                                        });
-                                    }}
-                                >
-                                    {button.label}
-                                </Button>
-                            );
-                        })}
-                    </ButtonGroup>
-                </Row>
-            </CardBody>
-        </Card>
+                                            requestUpdatePlayerScore({
+                                                playerId: player.id ?? '',
+                                                newScore: newScore,
+                                            });
+                                        }}
+                                    >
+                                        {button.label}
+                                    </Button>
+                                );
+                            })}
+                        </ButtonGroup>
+                    </Row>
+                </CardBody>
+            </Card>
+        </Col>
     );
 };
 
