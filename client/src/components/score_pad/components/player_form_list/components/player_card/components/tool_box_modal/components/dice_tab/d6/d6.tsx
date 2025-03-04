@@ -9,7 +9,9 @@ export const D6 = () => {
 
     const rollDice = (e: React.MouseEvent) => {
         e.preventDefault();
+
         setIsRolling(true);
+
         const Dice = e.currentTarget as HTMLDivElement;
 
         const numberOfRotations = NUMBER_OF_ROTATIONS;
@@ -30,18 +32,21 @@ export const D6 = () => {
 
             return rotation;
         });
-        Dice.animate(rotations, {
+
+        const animation = Dice.animate(rotations, {
             duration: DICE_ROLL_TIME_MS,
             iterations: 1,
             fill: 'forwards',
-        }).onfinish = () => {
+        });
+
+        animation.onfinish = () => {
             setIsRolling(false);
         };
     };
 
     return (
         <div
-            className={`d-flex justify-content-center align-items-center h-100 ${
+            className={`d-flex justify-content-center align-items-center h-100 p-4 ${
                 isRolling ? 'pulse' : ''
             }`}
         >

@@ -1,5 +1,7 @@
 .coin {
     width: 100%;
+    margin-bottom: 25px;
+    margin-top: 25px;
     background-color: gray;
     border-radius: 50%;
     -webkit-border-radius: 50%;

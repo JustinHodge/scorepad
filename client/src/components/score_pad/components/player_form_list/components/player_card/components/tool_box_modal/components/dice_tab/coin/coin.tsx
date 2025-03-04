@@ -9,9 +9,14 @@ export const Coin = () => {
     const [isFlipping, setIsFlipping] = useState(false);
 
     const flipCoin = (e: React.MouseEvent) => {
-        setIsFlipping(true);
+        if (isFlipping) return;
+
         e.preventDefault();
+
+        setIsFlipping(true);
+
         const numberOfFlips = Math.floor(Math.random() * 6) + 5;
+
         const interval = setInterval(() => {
             const coinImage = e.target as HTMLImageElement;
             coinImage.animate(
@@ -20,10 +25,12 @@ export const Coin = () => {
                         transform: 'rotateX(0deg)',
                         easing: 'ease-in',
                         paddingBottom: '0px',
+                        marginBottom: '25px',
                     },
                     {
                         transform: 'rotateX(90deg)',
-                        paddingBottom: '50px',
+                        paddingBottom: '25px',
+                        marginBottom: '0px',
                     },
                 ],
                 {
@@ -36,12 +43,14 @@ export const Coin = () => {
                     [
                         {
                             transform: 'rotateX(90deg)',
-                            paddingTop: '50px',
+                            paddingTop: '25px',
+                            marginBottom: '0px',
                         },
                         {
                             transform: 'rotateX(0deg)',
                             easing: 'ease-out',
                             paddingTop: '0px',
+                            marginBottom: '25px',
                         },
                     ],
                     {

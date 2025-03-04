@@ -5,13 +5,13 @@ import D6 from './d6/d6';
 
 export const DiceTab = () => {
     return (
-        <Card>
+        <Card className='p-4 m-4'>
             <Container>
-                <Row>
-                    <Col xs={6}>
+                <Row className='p-3'>
+                    <Col xs={12} md={6}>
                         <Coin />
                     </Col>
-                    <Col xs={6}>
+                    <Col xs={12} md={6}>
                         <D6 />
                     </Col>
                 </Row>
