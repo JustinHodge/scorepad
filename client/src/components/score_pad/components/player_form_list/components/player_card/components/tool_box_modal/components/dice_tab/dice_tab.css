@@ -1,0 +1,26 @@
+.coin {
+    width: 100%;
+    margin-bottom: 25px;
+    margin-top: 25px;
+    background-color: gray;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    -ms-border-radius: 50%;
+    -o-border-radius: 50%;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: inset 0px 0px 5px 0px #000000;
+    }
+
+    100% {
+        box-shadow: inset 0px 0px 5px 0px #ffffff;
+    }
+}
+
+.pulse {
+    animation: pulse 1s linear infinite;
+    -webkit-animation: pulse 1s linear infinite;
+}
